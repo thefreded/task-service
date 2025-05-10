@@ -19,12 +19,8 @@ public class DynamicAuthHeadersFactory implements ClientHeadersFactory {
     @Override
     public MultivaluedMap<String, String> update(MultivaluedMap<String, String> incomingHeaders, MultivaluedMap<String, String> clientOutgoingHeaders) {
         String userToken = headers.getHeaderString("Authorization");
-
-        for (String headerName : headers.getRequestHeaders().keySet()) {
-            System.out.println("Headers " + headerName + ": " + headers.getRequestHeaders().get(headerName));
-        }
-
         String token;
+
         if (userToken != null && userToken.startsWith("Bearer ")) {
             try {
                 token = tokenService.exchangeToken(userToken.substring(7));

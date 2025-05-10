@@ -1,7 +1,6 @@
 package com.freded.task.boundary;
 
 
-
 import com.freded.dtos.TaskDTO;
 import com.freded.entities.TaskEntity;
 import com.freded.task.controller.TaskService;
@@ -29,8 +28,6 @@ public class TaskImpl implements Task {
     UserService userService;
 
 
-
-
     /**
      * {@inheritDoc}
      */
@@ -43,7 +40,6 @@ public class TaskImpl implements Task {
     @Override
     public TaskEntity get(String taskId, Boolean returnEntity) {
         String currentUser = userService.getUsername();
-        System.out.println("Yes " +  currentUser);
         return taskService.get(taskId, currentUser);
     }
 
