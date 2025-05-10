@@ -50,7 +50,7 @@ public class TokenService {
             try {
                 var tokenResponse = defaultClient.getTokens().await().indefinitely();
 
-                // Estimate 300s expiration (you can configure this)
+
                 long defaultExpiresIn = 300;
                 clientToken = new AccessTokenCache(tokenResponse.getAccessToken(), defaultExpiresIn);
 
