@@ -83,7 +83,7 @@ public class TaskService {
         task.setName(newTask.getName());
         task.setDescription(newTask.getDescription());
 
-        // TODO: downside is I need to flush and refresh to get the latest DB Value. Disucss later.
+        // TODO: downside is I need to flush and refresh to get the latest DB Value. Discuss later.
         return taskMapper.toDTOWithoutFiles(taskRepository.update(task));
     }
 

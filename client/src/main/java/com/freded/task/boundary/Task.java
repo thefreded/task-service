@@ -1,10 +1,11 @@
 package com.freded.task.boundary;
 
+import com.freded.auth.DynamicAuthHeadersFactory;
 import com.freded.dtos.TaskDTO;
 import com.freded.entities.TaskEntity;
 import com.freded.task.entity.TaskQueryDTO;
 import com.freded.task.entity.TaskSortAndPaginationDTO;
-import com.freded.task.services.DynamicAuthHeadersFactory;
+
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
