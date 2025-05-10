@@ -1,11 +1,12 @@
-package com.freded.task.boundary;
+package com.freded.task.server.boundary;
 
+import com.freded.task.client.boundary.Task;
 import com.freded.dtos.TaskDTO;
 import com.freded.entities.TaskEntity;
-import com.freded.task.controller.TaskService;
-import com.freded.task.controller.UserService;
-import com.freded.task.entity.TaskQueryDTO;
-import com.freded.task.entity.TaskSortAndPaginationDTO;
+import com.freded.task.server.controller.TaskService;
+import com.freded.task.server.controller.UserService;
+import com.freded.task.client.entity.TaskQueryDTO;
+import com.freded.task.client.entity.TaskSortAndPaginationDTO;
 import jakarta.inject.Inject;
 
 import java.util.List;

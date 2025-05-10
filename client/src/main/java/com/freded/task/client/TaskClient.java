@@ -1,10 +1,10 @@
-package com.freded.task;
+package com.freded.task.client;
 
 
 import com.freded.dtos.TaskDTO;
 import com.freded.entities.TaskEntity;
-import com.freded.task.boundary.Task;
-import com.freded.task.entity.TaskQueryDTO;
+import com.freded.task.client.boundary.Task;
+import com.freded.task.client.entity.TaskQueryDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;

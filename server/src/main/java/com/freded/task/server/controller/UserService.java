@@ -1,4 +1,4 @@
-package com.freded.task.controller;
+package com.freded.task.server.controller;
 
 
 import io.quarkus.security.identity.SecurityIdentity;

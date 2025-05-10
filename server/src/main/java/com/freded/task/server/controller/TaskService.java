@@ -1,12 +1,12 @@
-package com.freded.task.controller;
+package com.freded.task.server.controller;
 
 
 import com.freded.dtos.TaskDTO;
 
 import com.freded.entities.TaskEntity;
-import com.freded.task.CustomWebApplicationException;
-import com.freded.task.entity.TaskQueryDTO;
-import com.freded.task.entity.TaskSortAndPaginationDTO;
+import com.freded.task.server.CustomWebApplicationException;
+import com.freded.task.client.entity.TaskQueryDTO;
+import com.freded.task.client.entity.TaskSortAndPaginationDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;

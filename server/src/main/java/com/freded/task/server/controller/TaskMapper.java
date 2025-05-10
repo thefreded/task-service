@@ -1,4 +1,4 @@
-package com.freded.task.controller;
+package com.freded.task.server.controller;
 
 import com.freded.dtos.TaskDTO;
 import com.freded.entities.TaskEntity;

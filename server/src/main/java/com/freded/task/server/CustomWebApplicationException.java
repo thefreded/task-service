@@ -1,4 +1,4 @@
-package com.freded.task;
+package com.freded.task.server;
 
 import jakarta.ws.rs.WebApplicationException;
 import lombok.Getter;
