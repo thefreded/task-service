@@ -5,6 +5,7 @@ import com.freded.entities.TaskEntity;
 import com.freded.task.entity.TaskQueryDTO;
 import com.freded.task.entity.TaskSortAndPaginationDTO;
 import com.freded.task.services.DynamicAuthHeadersFactory;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
@@ -14,9 +15,10 @@ import java.util.List;
 
 
 @RegisterRestClient(configKey = "task-api")
+@RegisterClientHeaders(DynamicAuthHeadersFactory.class)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@RegisterClientHeaders(DynamicAuthHeadersFactory.class)
+@RolesAllowed({"user"})
 @Path("tasks")
 public interface Task {
 

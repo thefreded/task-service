@@ -7,19 +7,11 @@ import com.freded.task.controller.TaskService;
 import com.freded.task.controller.UserService;
 import com.freded.task.entity.TaskQueryDTO;
 import com.freded.task.entity.TaskSortAndPaginationDTO;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 
-@Path("/tasks")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-@RequestScoped
+
 public class TaskImpl implements Task {
     @Inject
     TaskService taskService;
