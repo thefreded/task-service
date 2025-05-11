@@ -1,22 +1,16 @@
 package com.freded.task.client.boundary;
 
-import com.freded.auth.DynamicAuthHeadersFactory;
 import com.freded.dtos.TaskDTO;
 import com.freded.entities.TaskEntity;
 import com.freded.task.client.entity.TaskQueryDTO;
 import com.freded.task.client.entity.TaskSortAndPaginationDTO;
-
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import java.util.List;
 
 
-@RegisterRestClient(configKey = "task-api")
-@RegisterClientHeaders(DynamicAuthHeadersFactory.class)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RolesAllowed({"user"})

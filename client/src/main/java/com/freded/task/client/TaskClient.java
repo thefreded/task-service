@@ -3,7 +3,6 @@ package com.freded.task.client;
 
 import com.freded.dtos.TaskDTO;
 import com.freded.entities.TaskEntity;
-import com.freded.task.client.boundary.Task;
 import com.freded.task.client.entity.TaskQueryDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,7 +13,7 @@ public class TaskClient {
 
     @Inject
     @RestClient
-    Task taskRestClient;
+    TaskRestClient taskRestClient;
 
 
     public TaskDTO create(final TaskDTO task) {
