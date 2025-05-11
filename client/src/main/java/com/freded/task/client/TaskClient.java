@@ -17,7 +17,6 @@ public class TaskClient {
 
 
     public TaskDTO create(final TaskDTO task) {
-
         return taskRestClient.create(task);
 
     }
