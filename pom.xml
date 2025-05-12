@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.freded</groupId>
     <artifactId>task-service</artifactId>
@@ -30,6 +31,9 @@
         <quarkus-jdbc-postgres.version>3.22.0</quarkus-jdbc-postgres.version>
         <quarkus-oidc.version>3.20.0</quarkus-oidc.version>
         <quarkus-arc.version>3.20.0</quarkus-arc.version>
+        <quarkus-rest-client-jackson.version>3.20.0</quarkus-rest-client-jackson.version>
+        <quarkus-rest-jackson.version>3.20.0</quarkus-rest-jackson.version>
+        <task-shared-resources.version>1.0.0-SNAPSHOT</task-shared-resources.version>
     </properties>
 
     <dependencyManagement>
@@ -45,8 +49,6 @@
     </dependencyManagement>
 
     <dependencies>
-
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
@@ -85,15 +87,17 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-client-jackson</artifactId>
+            <version>${quarkus-rest-client-jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-jackson</artifactId>
+            <version>${quarkus-rest-jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.freded</groupId>
             <artifactId>task-shared-resources</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${task-shared-resources.version}</version>
         </dependency>
 
 
@@ -178,7 +182,8 @@
                 </executions>
                 <configuration>
                     <systemPropertyVariables>
-                        <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+                        <native.image.path>${project.build.directory}/${project.build.finalName}-runner
+                        </native.image.path>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
