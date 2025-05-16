@@ -33,4 +33,7 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build and Publish JAR
+        run: mvn deploy -DskipTests
