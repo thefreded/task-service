@@ -34,6 +34,9 @@
         <quarkus-rest-client-jackson.version>3.20.0</quarkus-rest-client-jackson.version>
         <quarkus-rest-jackson.version>3.20.0</quarkus-rest-jackson.version>
         <task-shared-resources.version>1.0.0-SNAPSHOT</task-shared-resources.version>
+        <github-package.url>https://maven.pkg.github.com/thefreded/task-service</github-package.url>
+        <github-shared-resources.url>https://maven.pkg.github.com/thefreded/task-shared-resources</github-shared-resources.url>
+        <github-custom-token.url>https://maven.pkg.github.com/thefreded/custom-token-module</github-custom-token.url>
     </properties>
 
     <dependencyManagement>
@@ -206,6 +209,25 @@
             </properties>
         </profile>
     </profiles>
+
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>${github-shared-resources.url</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>${github-custom-token.url</url>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>${github-package.url}</url>
+        </repository>
+    </distributionManagement>
 </project>
 
 
