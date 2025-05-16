@@ -217,15 +217,15 @@
             <url>${github-shared-resources.url}</url>
         </repository>
         <repository>
-            <id>github-custom-token</id>  
+            <id>github-custom-token</id>
             <url>${github-custom-token.url}</url>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
+            <id>github-task-service</id>
+            <name>Task Service Package</name>
             <url>${github-package.url}</url>
         </repository>
     </distributionManagement>
