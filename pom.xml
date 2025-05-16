@@ -37,7 +37,7 @@
         <github-package.url>https://maven.pkg.github.com/thefreded/task-service</github-package.url>
         <github-shared-resources.url>https://maven.pkg.github.com/thefreded/task-shared-resources</github-shared-resources.url>
         <github-custom-token.url>https://maven.pkg.github.com/thefreded/custom-token-module</github-custom-token.url>
-        <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
+
     </properties>
 
     <dependencyManagement>
@@ -191,14 +191,6 @@
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>${maven-deploy-plugin.version}</version>
-                <configuration>
-                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
