@@ -213,14 +213,15 @@
 
     <repositories>
         <repository>
-            <id>github</id>
-            <url>${github-shared-resources.url</url>
+            <id>github-shared-resources</id>
+            <url>${github-shared-resources.url}</url>
         </repository>
         <repository>
-            <id>github</id>
-            <url>${github-custom-token.url</url>
+            <id>github-custom-token</id>  
+            <url>${github-custom-token.url}</url>
         </repository>
     </repositories>
+
     <distributionManagement>
         <repository>
             <id>github</id>
