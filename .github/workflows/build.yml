@@ -35,7 +35,7 @@ jobs:
       - name: Use custom Maven settings.xml with GitHub credentials
         run: |
           mkdir -p ~/.m2
-          cp .github/settings/maven-settings.xml ~/.m2/settings.xml
+          cp ./.github/settings/maven-settings.xml ~/.m2/settings.xml
 
       - name: Build and Publish JAR
         env:
