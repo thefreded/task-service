@@ -36,15 +36,21 @@ jobs:
         run: |
           mkdir -p ~/.m2
           cp ./.github/settings/maven-settings.xml ~/.m2/settings.xml
+          sed -i "s/\${env.GITHUB_ACTOR}/${{ github.actor }}/g" ~/.m2/settings.xml
+          sed -i "s/\${env.GITHUB_TOKEN}/${{ secrets.GITHUB_TOKEN }}/g" ~/.m2/settings.xml
+          cat ~/.m2/settings.xml
 
       - name: Build (install) artifacts locally
-        run: mvn install -pl client,server -am -DskipTests -Dquarkus.package.type=fast-jar --settings ~/.m2/settings.xml
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn install -pl client,server -am -DskipTests -U --settings ~/.m2/settings.xml
 
       - name: Deploy to GitHub Packages (client and server)
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn deploy -pl client,server -am -DskipTests -Dquarkus.package.type=fast-jar --settings ~/.m2/settings.xml
+        run: mvn deploy -pl client,server -am -DskipTests -U --settings ~/.m2/settings.xml
 
       - name: Create Docker build context directory
         run: |
@@ -52,7 +58,7 @@ jobs:
           cp -r server/target/quarkus-app/* docker-build/
           ls -la docker-build/
 
-      - name: List server target directory (for debugging)
+      - name: List server target directory (for debugging, remove later)
         run: ls -la server/target/quarkus-app/
 
       - name: Set up Docker Buildx
