@@ -84,6 +84,6 @@ jobs:
           file: ./server/Dockerfile
           push: true
           tags: |
-            workfred/server:latest
-            ghcr.io/${{ github.repository_owner }}/server:latest
+            workfred/task-server:latest
+            ghcr.io/${{ github.repository_owner }}/task-server:latest
           platforms: linux/amd64
