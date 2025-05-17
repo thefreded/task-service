@@ -46,7 +46,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn deploy -pl client,server -am -DskipTests -Dquarkus.package.type=fast-jar --settings ~/.m2/settings.xml
 
-      - name: List server target directory (remove later)
+      - name: Create Docker build context directory
+        run: |
+          mkdir -p docker-build/
+          cp -r server/target/quarkus-app/* docker-build/
+          ls -la docker-build/
+
+      - name: List server target directory (for debugging)
         run: ls -la server/target/quarkus-app/
 
       - name: Set up Docker Buildx
@@ -68,10 +74,10 @@ jobs:
       - name: Build and Push Docker Image (server module)
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./docker-build
           file: ./server/Dockerfile
           push: true
           tags: |
-            workfred/task-server:latest
-            ghcr.io/${{ github.repository_owner }}/task-server:latest
+            workfred/server:latest
+            ghcr.io/${{ github.repository_owner }}/server:latest
           platforms: linux/amd64
