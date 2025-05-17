@@ -37,11 +37,14 @@ jobs:
           mkdir -p ~/.m2
           cp ./.github/settings/maven-settings.xml ~/.m2/settings.xml
 
-      - name: Build and Publish JAR (client, server and service*)
+      - name: Build and Publish JAR (only client and server)
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn deploy -DskipTests
+        run: mvn deploy -pl client,server -am -DskipTests
+
+      - name: Locally build server module for Docker packaging
+        run: mvn package -pl server -am -DskipTests
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
