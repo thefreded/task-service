@@ -99,16 +99,16 @@ jobs:
           echo "Determined bump level: $bump"
           echo "bump=$bump" >> $GITHUB_OUTPUT
 
-      - name: Bump version in <task-service.version> property
+      - name: Bump version in version tags
         id: bump_version
         run: |
           sudo apt-get update && sudo apt-get install -y libxml2-utils
 
-          # Extract version from root pom.xml
-          CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='parent']/*[local-name()='version']/text()" pom.xml)
+          # Extract current version from root <version>
+          CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
           echo "Current version: $CURRENT_VERSION"
 
-          # Remove -SNAPSHOT if present for bumping
+          # Remove -SNAPSHOT if present
           IFS='.' read -r MAJOR MINOR PATCH <<< "$(echo "$CURRENT_VERSION" | sed 's/-SNAPSHOT//')"
           BUMP=${{ steps.version_bump.outputs.bump }}
 
@@ -127,15 +127,13 @@ jobs:
           echo "New version: $NEW_VERSION"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-          # Update root pom.xml <parent><version>
+          # Update root <version>
           sed -i "0,/<version>$CURRENT_VERSION<\/version>/s//<version>$NEW_VERSION<\/version>/" pom.xml
 
-          # Update <parent><version> in client and server poms
+          # Update <parent><version> in module POMs
           for module in client server; do
             sed -i "0,/<version>$CURRENT_VERSION<\/version>/s//<version>$NEW_VERSION<\/version>/" "$module/pom.xml"
           done
-      
-      
 
       - name: Build and Push Docker Image (server module)
         uses: docker/build-push-action@v6
