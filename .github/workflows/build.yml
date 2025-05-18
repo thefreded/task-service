@@ -42,13 +42,67 @@ jobs:
           sed -i "s/\${env.GITHUB_TOKEN}/${{ secrets.GITHUB_TOKEN }}/g" ~/.m2/settings.xml
           cat ~/.m2/settings.xml
 
-      - name: Build (install) artifacts locally
+      - name: Determine version bump from all commits in PR merge
+        id: determine_bump
+        run: |
+          COMMITS=$(git log ${{ github.event.before }}..${{ github.sha }} --pretty=format:"%s")
+          echo "Analyzing commit messages:"
+          echo "$COMMITS"
+
+          bump="none"
+
+          if echo "$COMMITS" | grep -qE "^feat!:"; then
+            bump="major"
+          elif echo "$COMMITS" | grep -qE "^feat:"; then
+            bump="minor"
+          elif echo "$COMMITS" | grep -qE "^chore:" || echo "$COMMITS" | grep -qE "^fix:"; then
+            bump="patch"
+          fi
+
+          echo "Determined bump level: $bump"
+          echo "bump=$bump" >> $GITHUB_OUTPUT
+
+      - name: Bump version in version tags
+        id: bump_version
+        run: |
+          sudo apt-get update && sudo apt-get install -y libxml2-utils
+          
+          CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
+          echo "Current version: $CURRENT_VERSION"
+          
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$(echo "$CURRENT_VERSION" | sed 's/-SNAPSHOT//')"
+          BUMP=${{ steps.determine_bump.outputs.bump }}
+          
+          if [ "$BUMP" = "major" ]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif [ "$BUMP" = "minor" ]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          elif [ "$BUMP" = "patch" ]; then
+            PATCH=$((PATCH + 1))
+          fi
+          
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "New version: $NEW_VERSION"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          
+          # Update root <version>
+          sed -i "0,/<version>$CURRENT_VERSION<\/version>/s//<version>$NEW_VERSION<\/version>/" pom.xml
+          
+          # Update <parent><version> in module POMs
+          for module in client server; do
+            sed -i "0,/<version>$CURRENT_VERSION<\/version>/s//<version>$NEW_VERSION<\/version>/" "$module/pom.xml"
+          done
+
+      - name: Build (install) artifacts locally with new version
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn install -pl client,server -am -DskipTests -U --settings ~/.m2/settings.xml
 
-      - name: Deploy to GitHub Packages (client and server)
+      - name: Deploy to GitHub Packages (client and server) with new version
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,62 +132,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Determine version bump from all commits in PR merge
-        id: determine_bump
-        run: |
-          COMMITS=$(git log ${{ github.event.before }}..${{ github.sha }} --pretty=format:"%s")
-          echo "Analyzing commit messages:"
-          echo "$COMMITS"
-
-          bump="none"
-
-          if echo "$COMMITS" | grep -qE "^feat!:"; then
-            bump="major"
-          elif echo "$COMMITS" | grep -qE "^feat:"; then
-            bump="minor"
-          elif echo "$COMMITS" | grep -qE "^chore:" || echo "$COMMITS" | grep -qE "^fix:"; then
-            bump="patch"
-          fi
-
-          echo "Determined bump level: $bump"
-          echo "bump=$bump" >> $GITHUB_OUTPUT
-
-      - name: Bump version in version tags
-        id: bump_version
-        run: |
-            sudo apt-get update && sudo apt-get install -y libxml2-utils
-  
-  
-            CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
-            echo "Current version: $CURRENT_VERSION"
-  
-            IFS='.' read -r MAJOR MINOR PATCH <<< "$(echo "$CURRENT_VERSION" | sed 's/-SNAPSHOT//')"
-            BUMP=${{ steps.determine_bump.outputs.bump }}
-          
-         
-            if [ "$BUMP" = "major" ]; then
-              MAJOR=$((MAJOR + 1))
-              MINOR=0
-              PATCH=0
-            elif [ "$BUMP" = "minor" ]; then
-              MINOR=$((MINOR + 1))
-              PATCH=0
-            elif [ "$BUMP" = "patch" ]; then
-              PATCH=$((PATCH + 1))
-            fi
-
-            NEW_VERSION="$MAJOR.$MINOR.$PATCH"
-            echo "New version: $NEW_VERSION"
-            echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
-            # Update root <version>
-            sed -i "0,/<version>$CURRENT_VERSION<\/version>/s//<version>$NEW_VERSION<\/version>/" pom.xml
-
-            # Update <parent><version> in module POMs
-            for module in client server; do
-              sed -i "0,/<version>$CURRENT_VERSION<\/version>/s//<version>$NEW_VERSION<\/version>/" "$module/pom.xml"
-            done
 
       - name: Build and Push Docker Image (server module)
         uses: docker/build-push-action@v6
