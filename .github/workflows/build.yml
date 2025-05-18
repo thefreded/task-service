@@ -80,14 +80,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Determine version bump from all commits in PR merge
-        id: version_bump
+        id: determine_bump
         run: |
           COMMITS=$(git log ${{ github.event.before }}..${{ github.sha }} --pretty=format:"%s")
           echo "Analyzing commit messages:"
           echo "$COMMITS"
-          
+
           bump="none"
-          
+
           if echo "$COMMITS" | grep -qE "^feat!:"; then
             bump="major"
           elif echo "$COMMITS" | grep -qE "^feat:"; then
@@ -95,7 +95,7 @@ jobs:
           elif echo "$COMMITS" | grep -qE "^chore:" || echo "$COMMITS" | grep -qE "^fix:"; then
             bump="patch"
           fi
-          
+
           echo "Determined bump level: $bump"
           echo "bump=$bump" >> $GITHUB_OUTPUT
 
@@ -110,7 +110,7 @@ jobs:
 
           # Remove -SNAPSHOT if present
           IFS='.' read -r MAJOR MINOR PATCH <<< "$(echo "$CURRENT_VERSION" | sed 's/-SNAPSHOT//')"
-          BUMP=${{ steps.version_bump.outputs.bump }}
+          BUMP=${{ steps.determine_bump.outputs.bump }}
 
           if [ "$BUMP" = "major" ]; then
             MAJOR=$((MAJOR + 1))
@@ -152,8 +152,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-      
+
           git add pom.xml client/pom.xml server/pom.xml
-      
           git commit -m "chore: bump version to ${{ steps.bump_version.outputs.version }}" || echo "No changes to commit"
           git push
