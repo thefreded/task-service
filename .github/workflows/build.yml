@@ -99,16 +99,17 @@ jobs:
           echo "Determined bump level: $bump"
           echo "bump=$bump" >> $GITHUB_OUTPUT
 
-      - name: Bump version in pom.xml
+      - name: Bump version in <task-service.version> property
         id: bump_version
         run: |
           sudo apt-get update && sudo apt-get install -y libxml2-utils
-          CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" server/pom.xml)
+          
+          CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='properties']/*[local-name()='task-service.version']/text()" pom.xml)
           echo "Current version: $CURRENT_VERSION"
-
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$(echo "$CURRENT_VERSION" | sed 's/-SNAPSHOT//')"
           BUMP=${{ steps.version_bump.outputs.bump }}
-
+          
           if [ "$BUMP" = "major" ]; then
             MAJOR=$((MAJOR + 1))
             MINOR=0
@@ -119,13 +120,12 @@ jobs:
           elif [ "$BUMP" = "patch" ]; then
             PATCH=$((PATCH + 1))
           fi
-
+          
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
           echo "New version: $NEW_VERSION"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
-          sed -i "s|<version>$CURRENT_VERSION</version>|<version>$NEW_VERSION</version>|" server/pom.xml
-
+          
+          sed -i "s|<task-service.version>$CURRENT_VERSION</task-service.version>|<task-service.version>$NEW_VERSION</task-service.version>|" pom.xml
       
 
       - name: Build and Push Docker Image (server module)
