@@ -77,6 +77,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Determine version bump from all commits in PR merge
+        id: version_bump
+        run: |
+          COMMITS=$(git log ${{ github.event.before }}..${{ github.sha }} --pretty=format:"%s")
+          echo "Analyzing commit messages:"
+          echo "$COMMITS"
+          
+          bump="none"
+          
+          if echo "$COMMITS" | grep -qE "^feat!:"; then
+            bump="major"
+          elif echo "$COMMITS" | grep -qE "^feat:"; then
+            bump="minor"
+          elif echo "$COMMITS" | grep -qE "^chore:" || echo "$COMMITS" | grep -qE "^fix:"; then
+            bump="patch"
+          fi
+          
+          echo "Determined bump level: $bump"
+          echo "bump=$bump" >> $GITHUB_OUTPUT
+      
+
       - name: Build and Push Docker Image (server module)
         uses: docker/build-push-action@v6
         with:
