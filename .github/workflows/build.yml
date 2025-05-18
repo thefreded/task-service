@@ -88,11 +88,11 @@ jobs:
 
           bump="none"
 
-          if echo "$COMMITS" | grep -qE "^feat!:|^BREAKING CHANGE:"; then
+          if echo "$COMMITS" | grep -qE "^feat!:"; then
             bump="major"
           elif echo "$COMMITS" | grep -qE "^feat:"; then
             bump="minor"
-          elif echo "$COMMITS" | grep -qE "^fix:|^chore:|^docs:|^style:|^refactor:|^perf:|^test:"; then
+          elif echo "$COMMITS" | grep -qE "^chore:" || echo "$COMMITS" | grep -qE "^fix:"; then
             bump="patch"
           fi
 
@@ -104,25 +104,15 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y libxml2-utils
 
-          CURRENT_VERSION=$(xmllint --xpath "string(/*[local-name()='project']/*[local-name()='version'])" pom.xml)
+          CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
           echo "Current version: $CURRENT_VERSION"
-
-          if [[ -z "$CURRENT_VERSION" ]]; then echo "ERROR: CURRENT_VERSION is empty"; exit 1; fi
-
-          # Extract only the semantic version part (X.Y.Z), ignoring any qualifiers like -SNAPSHOT
-          CLEAN_VERSION=$(echo "$CURRENT_VERSION" | grep -o '^[0-9]*\.[0-9]*\.[0-9]*')
+          
+          CLEAN_VERSION=$(echo "$CURRENT_VERSION" | sed 's/[^0-9.].*$//')
           echo "Clean version for parsing: $CLEAN_VERSION"
-
-          # Check for qualifiers like -SNAPSHOT to preserve them
-          QUALIFIER=""
-          if [[ "$CURRENT_VERSION" =~ -([A-Za-z]+)$ ]]; then
-            QUALIFIER="-${BASH_REMATCH[1]}"
-            echo "Detected qualifier: $QUALIFIER"
-          fi
-
+          
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CLEAN_VERSION"
           BUMP=${{ steps.determine_bump.outputs.bump }}
-
+         
           if [ "$BUMP" = "major" ]; then
             MAJOR=$((MAJOR + 1))
             MINOR=0
@@ -134,7 +124,7 @@ jobs:
             PATCH=$((PATCH + 1))
           fi
 
-          NEW_VERSION="$MAJOR.$MINOR.$PATCH$QUALIFIER"
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
           echo "New version: $NEW_VERSION"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
