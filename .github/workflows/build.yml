@@ -135,6 +135,16 @@ jobs:
           file: ./server/Dockerfile
           push: true
           tags: |
+            workfred/task-server:${{ steps.bump_version.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/task-server:${{ steps.bump_version.outputs.version }}
             workfred/task-server:latest
             ghcr.io/${{ github.repository_owner }}/task-server:latest
           platforms: linux/amd64
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add server/pom.xml
+          git commit -m "chore: bump version to ${{ steps.bump_version.outputs.version }}"
+          git push
