@@ -103,13 +103,15 @@ jobs:
         id: bump_version
         run: |
           sudo apt-get update && sudo apt-get install -y libxml2-utils
-          
-          CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='properties']/*[local-name()='task-service.version']/text()" pom.xml)
+
+          # Extract version from root pom.xml
+          CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='parent']/*[local-name()='version']/text()" pom.xml)
           echo "Current version: $CURRENT_VERSION"
-          
+
+          # Remove -SNAPSHOT if present for bumping
           IFS='.' read -r MAJOR MINOR PATCH <<< "$(echo "$CURRENT_VERSION" | sed 's/-SNAPSHOT//')"
           BUMP=${{ steps.version_bump.outputs.bump }}
-          
+
           if [ "$BUMP" = "major" ]; then
             MAJOR=$((MAJOR + 1))
             MINOR=0
@@ -120,12 +122,19 @@ jobs:
           elif [ "$BUMP" = "patch" ]; then
             PATCH=$((PATCH + 1))
           fi
-          
+
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
           echo "New version: $NEW_VERSION"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          
-          sed -i "s|<task-service.version>$CURRENT_VERSION</task-service.version>|<task-service.version>$NEW_VERSION</task-service.version>|" pom.xml
+
+          # Update root pom.xml <parent><version>
+          sed -i "0,/<version>$CURRENT_VERSION<\/version>/s//<version>$NEW_VERSION<\/version>/" pom.xml
+
+          # Update <parent><version> in client and server poms
+          for module in client server; do
+            sed -i "0,/<version>$CURRENT_VERSION<\/version>/s//<version>$NEW_VERSION<\/version>/" "$module/pom.xml"
+          done
+      
       
 
       - name: Build and Push Docker Image (server module)
@@ -141,10 +150,12 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/task-server:latest
           platforms: linux/amd64
 
-      - name: Commit version bump
+      - name: Commit and Push Version Bump
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add server/pom.xml
-          git commit -m "chore: bump version to ${{ steps.bump_version.outputs.version }}"
+      
+          git add pom.xml client/pom.xml server/pom.xml
+      
+          git commit -m "chore: bump version to ${{ steps.bump_version.outputs.version }}" || echo "No changes to commit"
           git push

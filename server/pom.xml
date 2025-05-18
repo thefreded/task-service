@@ -16,7 +16,7 @@
         <dependency>
             <groupId>com.freded</groupId>
             <artifactId>task-client</artifactId>
-            <version>${task-service.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>
