@@ -102,16 +102,15 @@ jobs:
       - name: Bump version in version tags
         id: bump_version
         run: |
-          sudo apt-get update && sudo apt-get install -y libxml2-utils
-
-          CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
-          echo "Current version: $CURRENT_VERSION"
+            sudo apt-get update && sudo apt-get install -y libxml2-utils
+  
+  
+            CURRENT_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
+            echo "Current version: $CURRENT_VERSION"
+  
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$(echo "$CURRENT_VERSION" | sed 's/-SNAPSHOT//')"
+            BUMP=${{ steps.determine_bump.outputs.bump }}
           
-          CLEAN_VERSION=$(echo "$CURRENT_VERSION" | sed 's/[^0-9.].*$//')
-          echo "Clean version for parsing: $CLEAN_VERSION"
-          
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$CLEAN_VERSION"
-          BUMP=${{ steps.determine_bump.outputs.bump }}
          
           if [ "$BUMP" = "major" ]; then
             MAJOR=$((MAJOR + 1))
