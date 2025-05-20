@@ -115,7 +115,7 @@ jobs:
           cp -r server/target/quarkus-app/* docker-build/
           ls -la docker-build/
 
-      - name: List server target directory (for debugging, remove later)
+      - name: List server target directory (for debugging, remove  dummy later)
         run: ls -la server/target/quarkus-app/
 
       - name: Set up Docker Buildx
