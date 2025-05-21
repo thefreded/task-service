@@ -52,11 +52,17 @@ jobs:
 
           bump="none"
 
-          if echo "$COMMITS" | grep -qE "^feat!:"; then
+          # Check for major (breaking changes)
+          if echo "$COMMITS" | grep -qE "^(feat|fix|perf|refactor|chore|ci|docs|style|test)!:"; then
             bump="major"
-          elif echo "$COMMITS" | grep -qE "^feat:"; then
+          # Check for minor (new features)
+          elif echo "$COMMITS" | grep -qE "^feat(\(.+\))?: "; then
             bump="minor"
-          elif echo "$COMMITS" | grep -qE "^chore:" || echo "$COMMITS" | grep -qE "^fix:"; then
+          # Check for patch (fixes and other safe changes)
+          elif echo "$COMMITS" | grep -qE "^(fix|perf|refactor|chore|ci|docs|style|test)(\(.+\))?: "; then
+            bump="patch"
+          else
+            echo "No relevant commit prefix found; defaulting to 'patch'"
             bump="patch"
           fi
 
