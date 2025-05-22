@@ -30,6 +30,9 @@ public class TaskImpl implements Task {
         return taskService.get(taskId, currentUser, taskParams);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TaskEntity get(String taskId, Boolean returnEntity) {
         String currentUser = userService.getUsername();

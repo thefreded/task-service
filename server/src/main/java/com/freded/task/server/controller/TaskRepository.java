@@ -1,6 +1,5 @@
 package com.freded.task.server.controller;
 
-
 import com.freded.entities.TaskEntity;
 import com.freded.task.client.entity.TaskQueryDTO;
 import com.freded.task.client.entity.TaskSortAndPaginationDTO;
@@ -14,6 +13,11 @@ import jakarta.transaction.Transactional;
 
 import java.util.List;
 
+/**
+ * Repository class for managing task data persistence operations.
+ * Provides CRUD operations for TaskEntity with user-specific access control
+ * using JPA Criteria API for dynamic query building.
+ */
 @ApplicationScoped
 public class TaskRepository {
 
@@ -55,10 +59,8 @@ public class TaskRepository {
         //Define the FROM clause (Task table. Where the query should start from)
         Root<TaskEntity> root = cbQuery.from(TaskEntity.class);
 
-
         // Create a ParameterExpression for the parameter
         ParameterExpression<String> createdByParam = cb.parameter(String.class, CREATEDBY);
-
 
         // Select the root entity (TaskEntity) and apply the filter condition to ensure the task is created by the authenticated user.
         cbQuery.select(root).where(cb.equal(root.get(CREATEDBY), createdByParam));
@@ -75,10 +77,8 @@ public class TaskRepository {
         // Apply pagination settings to the query based on the provided qParams.
         paginationAndSortingService.paginate(typedQuery, qParams);
 
-
         return typedQuery.getResultList();
     }
-
 
     /**
      * Gets the task with the taskId provided that was created by the authenticated user.
@@ -91,10 +91,18 @@ public class TaskRepository {
         TaskQueryDTO defaultParams = new TaskQueryDTO();
 
         return read(createdBy, taskId, defaultParams);
-
     }
 
-    public  TaskEntity read(final String createdBy, final String taskId, final TaskQueryDTO queryParam){
+    /**
+     * Gets the task with the specified ID that was created by the authenticated user,
+     * with optional file loading based on query parameters.
+     *
+     * @param createdBy  who created the task. Ideally the logged-in user.
+     * @param taskId     unique identifier of the task.
+     * @param queryParam query parameters including file loading preferences.
+     * @return the found task {@link TaskEntity}, or {@code null} if no task is found.
+     */
+    public TaskEntity read(final String createdBy, final String taskId, final TaskQueryDTO queryParam) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<TaskEntity> cq = cb.createQuery(TaskEntity.class);
         Root<TaskEntity> task = cq.from(TaskEntity.class);
@@ -116,7 +124,7 @@ public class TaskRepository {
         }
     }
 
-    /***
+    /**
      * Updates the task with the taskId with the data provided in newTask.
      *
      * @param newTask newly updated task {@link TaskEntity}.
@@ -131,13 +139,11 @@ public class TaskRepository {
      * Deletes the task provided.
      *
      * @param task task to be deleted {@link TaskEntity}
-     * @return the id of the deleted ask or {@code null} if no task is found with the id.
+     * @return the id of the deleted task or {@code null} if no task is found with the id.
      */
     @Transactional
     public String delete(final TaskEntity task) {
         em.remove(task);
         return task.getId();
     }
-
-
 }

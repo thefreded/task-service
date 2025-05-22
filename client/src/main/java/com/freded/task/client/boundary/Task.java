@@ -48,6 +48,8 @@ public interface Task {
     @Path("{taskId}")
     public TaskDTO get(@PathParam("taskId") final String taskId, @BeanParam final TaskQueryDTO taskParams);
 
+
+    // TODO: Discuss, needed because the client need entity when saving a file and not DTO
     @GET
     @Path("raw/{taskId}")
     public TaskEntity get(@PathParam("taskId") final String taskId, @QueryParam("returnEntity") final Boolean returnEntity);
