@@ -1,0 +1,24 @@
+package com.freded.task.server.exception;
+
+import io.quarkus.security.UnauthorizedException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
+
+/**
+ * Handles unauthorized access (missing token)
+ */
+@Provider
+public class SecurityUnauthorizedExceptionMapper implements ExceptionMapper<UnauthorizedException> {
+
+    @Override
+    public Response toResponse(io.quarkus.security.UnauthorizedException exception) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage("Authentication required");
+        errorResponse.setStatusCode(Response.Status.UNAUTHORIZED.getStatusCode());
+
+        return Response.status(Response.Status.UNAUTHORIZED).entity(errorResponse).type(MediaType.APPLICATION_JSON).build();
+    }
+}
+

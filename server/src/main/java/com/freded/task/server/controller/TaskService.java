@@ -4,12 +4,13 @@ import com.freded.dtos.TaskDTO;
 import com.freded.entities.TaskEntity;
 import com.freded.task.client.entity.TaskQueryDTO;
 import com.freded.task.client.entity.TaskSortAndPaginationDTO;
-import com.freded.task.server.CustomWebApplicationException;
+import com.freded.task.server.exception.ResourceNotFoundException;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Service class for managing task operations.
@@ -58,25 +59,33 @@ public class TaskService {
      * @param taskId      the unique identifier of the task
      * @param currentUser the username of the user requesting the task
      * @return the task entity
+     * @throws ResourceNotFoundException if task is not found
      */
     public TaskEntity get(final String taskId, final String currentUser) {
-        return taskRepository.read(currentUser, taskId);
+        TaskEntity taskEntity = taskRepository.read(currentUser, taskId);
+
+        if (taskEntity == null) {
+            throw new ResourceNotFoundException("Not found task with ID " + taskId);
+        }
+
+        return taskEntity;
     }
 
     /**
      * Retrieves a specific task by ID with optional file loading.
      *
-     * @param taskId     the unique identifier of the task
+     * @param taskId      the unique identifier of the task
      * @param currentUser the username of the user requesting the task
-     * @param taskParams query parameters including file loading preference
-     * @return the task as DTO with or without files, or null if not found
+     * @param taskParams  query parameters including file loading preference
+     * @return the task as DTO with or without files
+     * @throws ResourceNotFoundException if task is not found
      */
     public TaskDTO get(final String taskId, final String currentUser, final TaskQueryDTO taskParams) {
 
         TaskEntity taskEntity = taskRepository.read(currentUser, taskId, taskParams);
 
         if (taskEntity == null) {
-            return null;
+            throw new ResourceNotFoundException("Not found task with ID " + taskId);
         }
 
         if (taskParams.isLoadFiles()) {
@@ -97,7 +106,13 @@ public class TaskService {
     public String delete(final String taskId, final String currentUser) {
 
         TaskEntity task = taskRepository.read(currentUser, taskId);
-        return taskRepository.delete(task);
+        String deletedTaskId = taskRepository.delete(task);
+
+        if (!Objects.equals(taskId, deletedTaskId)) {
+            throw new ResourceNotFoundException("Not found task with ID " + taskId);
+        }
+
+        return deletedTaskId;
     }
 
     /**
@@ -107,7 +122,7 @@ public class TaskService {
      * @param newTask     the new task data
      * @param currentUser the username of the user updating the task
      * @return the updated task as DTO without file associations
-     * @throws CustomWebApplicationException if task is not found
+     * @throws ResourceNotFoundException if task is not found
      */
     @Transactional
     public TaskDTO update(final String taskId, final TaskDTO newTask, final String currentUser) {
@@ -115,7 +130,7 @@ public class TaskService {
         TaskEntity task = taskRepository.read(currentUser, taskId);
 
         if (task == null) {
-            throw new CustomWebApplicationException("Task with Id:" + taskId, 204);
+            throw new ResourceNotFoundException("Not found task with ID " + taskId);
         }
 
         // update task with new task inputs
