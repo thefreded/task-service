@@ -1,9 +1,8 @@
 package com.freded.task.client.boundary;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.entities.TaskEntity;
-import com.freded.task.client.entity.TaskQueryDTO;
-import com.freded.task.client.entity.TaskSortAndPaginationDTO;
+import com.freded.task.client.dtos.TaskQueryDTO;
+import com.freded.task.client.dtos.TaskSortAndPaginationDTO;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -48,11 +47,6 @@ public interface Task {
     @Path("{taskId}")
     public TaskDTO get(@PathParam("taskId") final String taskId, @BeanParam final TaskQueryDTO taskParams);
 
-
-    // TODO: Discuss, needed because the client need entity when saving a file and not DTO
-    @GET
-    @Path("raw/{taskId}")
-    public TaskEntity get(@PathParam("taskId") final String taskId, @QueryParam("returnEntity") final Boolean returnEntity);
 
     /**
      * Deletes a task with the taskId provided.

@@ -1,9 +1,8 @@
 package com.freded.task.client;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.entities.TaskEntity;
-import com.freded.task.client.entity.TaskQueryDTO;
-import com.freded.task.client.entity.TaskSortAndPaginationDTO;
+import com.freded.task.client.dtos.TaskQueryDTO;
+import com.freded.task.client.dtos.TaskSortAndPaginationDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -50,17 +49,6 @@ public class TaskClient {
      */
     public TaskDTO get(final String taskId, final TaskQueryDTO taskParams) {
         return taskRestClient.get(taskId, taskParams);
-    }
-
-    /**
-     * Retrieves a specific task by ID with option to return as entity.
-     *
-     * @param taskId       the unique identifier of the task
-     * @param returnEntity flag to determine return type (entity vs DTO)
-     * @return the task as entity
-     */
-    public TaskEntity get(final String taskId, final Boolean returnEntity) {
-        return taskRestClient.get(taskId, returnEntity);
     }
 
     /**

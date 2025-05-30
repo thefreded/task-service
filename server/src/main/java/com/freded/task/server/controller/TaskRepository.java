@@ -1,8 +1,8 @@
 package com.freded.task.server.controller;
 
-import com.freded.entities.TaskEntity;
-import com.freded.task.client.entity.TaskQueryDTO;
-import com.freded.task.client.entity.TaskSortAndPaginationDTO;
+import com.freded.task.client.dtos.TaskQueryDTO;
+import com.freded.task.client.dtos.TaskSortAndPaginationDTO;
+import com.freded.task.server.entity.TaskEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;

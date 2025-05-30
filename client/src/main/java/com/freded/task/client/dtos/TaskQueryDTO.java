@@ -1,4 +1,4 @@
-package com.freded.task.client.entity;
+package com.freded.task.client.dtos;
 
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.QueryParam;

@@ -1,9 +1,9 @@
 package com.freded.task.server.controller;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.entities.TaskEntity;
-import com.freded.task.client.entity.TaskQueryDTO;
-import com.freded.task.client.entity.TaskSortAndPaginationDTO;
+import com.freded.task.client.dtos.TaskQueryDTO;
+import com.freded.task.client.dtos.TaskSortAndPaginationDTO;
+import com.freded.task.server.entity.TaskEntity;
 import com.freded.task.server.exception.ResourceNotFoundException;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;

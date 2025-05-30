@@ -34,10 +34,14 @@
         <quarkus-arc.version>3.20.0</quarkus-arc.version>
         <quarkus-rest-client-jackson.version>3.20.0</quarkus-rest-client-jackson.version>
         <quarkus-rest-jackson.version>3.20.0</quarkus-rest-jackson.version>
-        <task-shared-resources.version>1.0.0-SNAPSHOT</task-shared-resources.version>
+        <task-shared-resources.version>1.0.2</task-shared-resources.version>
         <github-package.url>https://maven.pkg.github.com/thefreded/task-service</github-package.url>
         <github-shared-resources.url>https://maven.pkg.github.com/thefreded/task-shared-resources</github-shared-resources.url>
         <github-custom-token.url>https://maven.pkg.github.com/thefreded/custom-token-module</github-custom-token.url>
+        <quarkus-test-security.version>3.20.0</quarkus-test-security.version>
+        <io-rest-assured.version>5.5.1</io-rest-assured.version>
+        <quarkus-junit5.version>3.20.0</quarkus-junit5.version>
+        <quarkus-jdbc-h2.version>3.20.0</quarkus-jdbc-h2.version>
 
     </properties>
 
@@ -109,11 +113,29 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
+            <version>${quarkus-junit5.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <version>${io-rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
+            <version>${quarkus-jdbc-h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-test-security</artifactId>
+            <version>${quarkus-test-security.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,4 +1,4 @@
-package com.freded.task.client.entity;
+package com.freded.task.client.dtos;
 
 import com.freded.dtos.PaginationAndSortingDTO;
 import lombok.AllArgsConstructor;

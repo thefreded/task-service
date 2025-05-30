@@ -1,7 +1,7 @@
 package com.freded.task.server.controller;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.entities.TaskEntity;
+import com.freded.task.server.entity.TaskEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
