@@ -1,6 +1,8 @@
 package com.freded.task.server.controller;
 
 import com.freded.dtos.TaskDTO;
+import com.freded.dtos.TaskFileDTO;
+import com.freded.dtos.TaskFileSortAndPaginationDTO;
 import com.freded.file.client.TaskFileClient;
 import com.freded.task.client.dto.TaskFileQueryDTO;
 import com.freded.task.client.dto.TaskSortAndPaginationDTO;
@@ -108,13 +110,12 @@ public class TaskService {
 
     private TaskDTO loadTaskWithFiles(final TaskDTO taskDTO, final TaskFileQueryDTO taskFileQueryDTO) {
 
-        /** TaskFileSortAndPaginationDTO taskFileSortAndPaginationDTO =
-         taskFilePaginationAndSortingMapper.toTaskFilePaginationDTO(taskFileQueryDTO);
-         List<TaskFileDTO> taskFiles = taskFileClient.getFilesForTask(taskDTO.getId(), taskFileSortAndPaginationDTO);
-         * */
+        TaskFileSortAndPaginationDTO taskFileSortAndPaginationDTO =
+                taskFilePaginationAndSortingMapper.toTaskFilePaginationDTO(taskFileQueryDTO);
+        List<TaskFileDTO> taskFiles = taskFileClient.getFilesForTask(taskDTO.getId(), taskFileSortAndPaginationDTO);
 
 
-        //taskDTO.setTaskFiles(taskFiles);
+        taskDTO.setTaskFiles(taskFiles);
 
         return taskDTO;
     }
