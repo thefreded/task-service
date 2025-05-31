@@ -1,7 +1,6 @@
 package com.freded.task.server.controller;
 
-import com.freded.task.client.dtos.TaskQueryDTO;
-import com.freded.task.client.dtos.TaskSortAndPaginationDTO;
+import com.freded.task.client.dto.TaskSortAndPaginationDTO;
 import com.freded.task.server.entity.TaskEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,9 +13,8 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 
 /**
- * Repository class for managing task data persistence operations.
- * Provides CRUD operations for TaskEntity with user-specific access control
- * using JPA Criteria API for dynamic query building.
+ * Repository class for managing task data persistence operations. Provides CRUD operations for TaskEntity with
+ * user-specific access control using JPA Criteria API for dynamic query building.
  */
 @ApplicationScoped
 public class TaskRepository {
@@ -42,12 +40,13 @@ public class TaskRepository {
     }
 
     /**
-     * Gets all tasks created by the currently authenticated user.
-     * Can also be sorted and paginated based on the provided parameters.
+     * Gets all tasks created by the currently authenticated user. Can also be sorted and paginated based on the
+     * provided parameters.
      *
      * @param createdBy who created the task. Ideally the loggedIn user.
      * @param qParams   the {@link TaskSortAndPaginationDTO} containing pagination and sorting options.
-     * @return a list of {@link TaskEntity} objects representing the tasks created by the user in regard to the options provided in {@code qParams}.
+     * @return a list of {@link TaskEntity} objects representing the tasks created by the user in regard to the options
+     * provided in {@code qParams}.
      */
     public List<TaskEntity> readAll(final String createdBy, final TaskSortAndPaginationDTO qParams) {
         // 1. Get the CriteriaBuilder.
@@ -62,7 +61,8 @@ public class TaskRepository {
         // Create a ParameterExpression for the parameter
         ParameterExpression<String> createdByParam = cb.parameter(String.class, CREATEDBY);
 
-        // Select the root entity (TaskEntity) and apply the filter condition to ensure the task is created by the authenticated user.
+        // Select the root entity (TaskEntity) and apply the filter condition to ensure the task is created by the
+        // authenticated user.
         cbQuery.select(root).where(cb.equal(root.get(CREATEDBY), createdByParam));
 
         // Apply sorting based on the parameters provided in qParams.
@@ -80,29 +80,16 @@ public class TaskRepository {
         return typedQuery.getResultList();
     }
 
-    /**
-     * Gets the task with the taskId provided that was created by the authenticated user.
-     *
-     * @param createdBy who created the task. Ideally the loggedIn user.
-     * @param taskId    id of the task.
-     * @return the found task {@link TaskEntity}, or {@code null} if no task is found.
-     */
-    public TaskEntity read(final String createdBy, String taskId) {
-        TaskQueryDTO defaultParams = new TaskQueryDTO();
-
-        return read(createdBy, taskId, defaultParams);
-    }
 
     /**
-     * Gets the task with the specified ID that was created by the authenticated user,
-     * with optional file loading based on query parameters.
+     * Gets the task with the specified ID that was created by the authenticated user, with optional file loading based
+     * on query parameters.
      *
-     * @param createdBy  who created the task. Ideally the logged-in user.
-     * @param taskId     unique identifier of the task.
-     * @param queryParam query parameters including file loading preferences.
+     * @param createdBy who created the task. Ideally the logged-in user.
+     * @param taskId    unique identifier of the task.
      * @return the found task {@link TaskEntity}, or {@code null} if no task is found.
      */
-    public TaskEntity read(final String createdBy, final String taskId, final TaskQueryDTO queryParam) {
+    public TaskEntity read(final String createdBy, final String taskId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<TaskEntity> cq = cb.createQuery(TaskEntity.class);
         Root<TaskEntity> task = cq.from(TaskEntity.class);
@@ -111,11 +98,6 @@ public class TaskRepository {
         Predicate idPredicate = cb.equal(task.get("id"), taskId);
         Predicate createdByPredicate = cb.equal(task.get("createdBy"), createdBy);
         cq.where(cb.and(idPredicate, createdByPredicate));
-
-        // Only fetch taskFiles if explicitly requested
-        if (queryParam.isLoadFiles()) {
-            task.fetch("taskFiles", JoinType.LEFT);
-        }
 
         try {
             return em.createQuery(cq).getSingleResult();

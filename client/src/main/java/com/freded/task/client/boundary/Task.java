@@ -1,8 +1,8 @@
 package com.freded.task.client.boundary;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.task.client.dtos.TaskQueryDTO;
-import com.freded.task.client.dtos.TaskSortAndPaginationDTO;
+import com.freded.task.client.dto.TaskFileQueryDTO;
+import com.freded.task.client.dto.TaskSortAndPaginationDTO;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -45,7 +45,7 @@ public interface Task {
      */
     @GET
     @Path("{taskId}")
-    public TaskDTO get(@PathParam("taskId") final String taskId, @BeanParam final TaskQueryDTO taskParams);
+    public TaskDTO get(@PathParam("taskId") final String taskId, @BeanParam final TaskFileQueryDTO taskParams);
 
 
     /**

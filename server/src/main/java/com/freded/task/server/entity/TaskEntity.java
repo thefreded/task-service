@@ -7,14 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
- * Represents a Task in the entity manager.
- * It includes fields for task identification, name, description, creation date,
- * last updated date, and the user who created the task.
+ * Represents a Task in the entity manager. It includes fields for task identification, name, description, creation
+ * date, last updated date, and the user who created the task.
  */
 @Entity
 @Data
@@ -29,8 +26,7 @@ public class TaskEntity {
     private String id = UUID.randomUUID().toString();
 
     /**
-     * The name of the task.
-     * The field must be unique and not be null.
+     * The name of the task. The field must be unique and not be null.
      */
     @NotNull(message = "Task must have a name")
     @Column(unique = true, nullable = false)
@@ -42,8 +38,8 @@ public class TaskEntity {
     private String description;
 
     /**
-     * The local date time that the task was created.
-     * It's set automatically by default with the current date and time the task was created.
+     * The local date time that the task was created. It's set automatically by default with the current date and time
+     * the task was created.
      */
     private LocalDateTime createdAt;
 
@@ -56,9 +52,6 @@ public class TaskEntity {
      * The username of the logged-in user who created the task.
      */
     private String createdBy;
-
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
-    private List<TaskFileEntity> taskFiles = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

@@ -1,29 +1,40 @@
 package com.freded.task.server.controller;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.task.client.dtos.TaskQueryDTO;
-import com.freded.task.client.dtos.TaskSortAndPaginationDTO;
+import com.freded.dtos.TaskFileDTO;
+import com.freded.dtos.TaskFileSortAndPaginationDTO;
+import com.freded.file.client.TaskFileClient;
+import com.freded.task.client.dto.TaskFileQueryDTO;
+import com.freded.task.client.dto.TaskSortAndPaginationDTO;
 import com.freded.task.server.entity.TaskEntity;
 import com.freded.task.server.exception.ResourceNotFoundException;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.jboss.logging.Logger;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
- * Service class for managing task operations.
- * Provides business logic for CRUD operations on tasks with user-specific access control.
+ * Service class for managing task operations. Provides business logic for CRUD operations on tasks with user-specific
+ * access control.
  */
 @RequestScoped
 public class TaskService {
-
+    private static final Logger LOG = Logger.getLogger(TaskService.class);
     @Inject
     TaskRepository taskRepository;
 
     @Inject
     TaskMapper taskMapper;
+
+    @Inject
+    TaskFileClient taskFileClient;
+
+    @Inject
+    TaskFilePaginationAndSortingMapper taskFilePaginationAndSortingMapper;
+
 
     /**
      * Creates a new task for the specified user.
@@ -37,7 +48,7 @@ public class TaskService {
         TaskEntity newTask = taskMapper.toEntity(task);
 
         newTask.setCreatedBy(currentUser);
-        return taskMapper.toDTOWithoutFiles(taskRepository.create(newTask));
+        return taskMapper.toDTO(taskRepository.create(newTask));
     }
 
     /**
@@ -80,19 +91,33 @@ public class TaskService {
      * @return the task as DTO with or without files
      * @throws ResourceNotFoundException if task is not found
      */
-    public TaskDTO get(final String taskId, final String currentUser, final TaskQueryDTO taskParams) {
+    public TaskDTO get(final String taskId, final String currentUser, final TaskFileQueryDTO taskParams) {
 
-        TaskEntity taskEntity = taskRepository.read(currentUser, taskId, taskParams);
+        TaskEntity taskEntity = taskRepository.read(currentUser, taskId);
 
         if (taskEntity == null) {
             throw new ResourceNotFoundException("Not found task with ID " + taskId);
         }
 
+        TaskDTO taskDTO = taskMapper.toDTO(taskEntity);
+
         if (taskParams.isLoadFiles()) {
-            return taskMapper.toDTOWithFiles(taskEntity);
+            return this.loadTaskWithFiles(taskDTO, taskParams);
         } else {
-            return taskMapper.toDTOWithoutFiles(taskEntity);
+            return taskDTO;
         }
+    }
+
+    private TaskDTO loadTaskWithFiles(final TaskDTO taskDTO, final TaskFileQueryDTO taskFileQueryDTO) {
+
+        TaskFileSortAndPaginationDTO taskFileSortAndPaginationDTO =
+                taskFilePaginationAndSortingMapper.toTaskFilePaginationDTO(taskFileQueryDTO);
+        List<TaskFileDTO> taskFiles = taskFileClient.getFilesForTask(taskDTO.getId(), taskFileSortAndPaginationDTO);
+
+
+        taskDTO.setTaskFiles(taskFiles);
+
+        return taskDTO;
     }
 
     /**
@@ -138,6 +163,6 @@ public class TaskService {
         task.setDescription(newTask.getDescription());
 
         // TODO: downside is I need to flush and refresh to get the latest DB Value. Discuss later.
-        return taskMapper.toDTOWithoutFiles(taskRepository.update(task));
+        return taskMapper.toDTO(taskRepository.update(task));
     }
 }

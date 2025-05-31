@@ -2,19 +2,16 @@ package com.freded.task.server.boundary;
 
 import com.freded.dtos.TaskDTO;
 import com.freded.task.client.boundary.Task;
-import com.freded.task.client.dtos.TaskQueryDTO;
-import com.freded.task.client.dtos.TaskSortAndPaginationDTO;
+import com.freded.task.client.dto.TaskFileQueryDTO;
+import com.freded.task.client.dto.TaskSortAndPaginationDTO;
 import com.freded.task.server.controller.TaskService;
 import com.freded.task.server.controller.UserService;
-import com.freded.task.server.entity.TaskEntity;
 import jakarta.inject.Inject;
-import org.jboss.logging.Logger;
 
 import java.util.List;
 
 
 public class TaskImpl implements Task {
-    private static final Logger LOG = Logger.getLogger(TaskImpl.class);
 
     @Inject
     TaskService taskService;
@@ -25,7 +22,7 @@ public class TaskImpl implements Task {
      * {@inheritDoc}
      */
     @Override
-    public TaskDTO get(final String taskId, final TaskQueryDTO taskParams) {
+    public TaskDTO get(final String taskId, final TaskFileQueryDTO taskParams) {
         String currentUser = userService.getUsername();
         return taskService.get(taskId, currentUser, taskParams);
     }

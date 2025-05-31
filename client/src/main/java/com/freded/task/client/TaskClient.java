@@ -1,8 +1,8 @@
 package com.freded.task.client;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.task.client.dtos.TaskQueryDTO;
-import com.freded.task.client.dtos.TaskSortAndPaginationDTO;
+import com.freded.task.client.dto.TaskFileQueryDTO;
+import com.freded.task.client.dto.TaskSortAndPaginationDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -47,8 +47,13 @@ public class TaskClient {
      * @param taskParams query parameters including file loading preferences
      * @return the task as DTO, or null if not found
      */
-    public TaskDTO get(final String taskId, final TaskQueryDTO taskParams) {
+    public TaskDTO get(final String taskId, final TaskFileQueryDTO taskParams) {
         return taskRestClient.get(taskId, taskParams);
+    }
+
+    public TaskDTO get(final String taskId) {
+        TaskFileQueryDTO taskFileQueryDTO = new TaskFileQueryDTO();
+        return get(taskId, taskFileQueryDTO);
     }
 
     /**
