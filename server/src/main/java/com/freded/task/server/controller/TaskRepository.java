@@ -22,7 +22,7 @@ public class TaskRepository {
     private static final String CREATEDBY = "createdBy";
 
     @Inject
-    EntityManager em;
+    EntityManager entityManager;
 
     @Inject
     PaginationAndSortingService paginationAndSortingService;
@@ -35,7 +35,7 @@ public class TaskRepository {
      */
     @Transactional
     public TaskEntity create(final TaskEntity task) {
-        em.persist(task);
+        entityManager.persist(task);
         return task;
     }
 
@@ -52,7 +52,7 @@ public class TaskRepository {
     public List<TaskEntity> readAll(final String createdBy,
             final TaskPaginationAndSortingDTO taskPaginationAndSortingDTO) {
         // 1. Get the CriteriaBuilder.
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         // Create the CriteriaQuery object for Task (more like blueprint)
         CriteriaQuery<TaskEntity> cbQuery = cb.createQuery(TaskEntity.class);
@@ -71,7 +71,7 @@ public class TaskRepository {
         paginationAndSortingService.sort(cb, cbQuery, root, taskPaginationAndSortingDTO);
 
         // Create a TypedQuery to execute the CriteriaQuery and get the result as TaskEntity objects.
-        TypedQuery<TaskEntity> typedQuery = em.createQuery(cbQuery);
+        TypedQuery<TaskEntity> typedQuery = entityManager.createQuery(cbQuery);
 
         // Set the parameter for the createdBy field to the username of the currently authenticated user.
         typedQuery.setParameter(CREATEDBY, createdBy);
@@ -92,7 +92,7 @@ public class TaskRepository {
      * @return the found task {@link TaskEntity}, or {@code null} if no task is found.
      */
     public TaskEntity read(final String createdBy, final String taskId) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TaskEntity> cq = cb.createQuery(TaskEntity.class);
         Root<TaskEntity> task = cq.from(TaskEntity.class);
 
@@ -102,7 +102,7 @@ public class TaskRepository {
         cq.where(cb.and(idPredicate, createdByPredicate));
 
         try {
-            return em.createQuery(cq).getSingleResult();
+            return entityManager.createQuery(cq).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -116,7 +116,7 @@ public class TaskRepository {
      */
     @Transactional
     public TaskEntity update(final TaskEntity newTask) {
-        return em.merge(newTask);
+        return entityManager.merge(newTask);
     }
 
     /**
@@ -127,7 +127,7 @@ public class TaskRepository {
      */
     @Transactional
     public String delete(final TaskEntity task) {
-        em.remove(task);
+        entityManager.remove(task);
         return task.getId();
     }
 }
