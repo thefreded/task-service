@@ -1,9 +1,8 @@
 package com.freded.task.server.boundary;
 
 import com.freded.dtos.TaskDTO;
+import com.freded.dtos.TaskPaginationAndSortingDTO;
 import com.freded.task.client.boundary.Task;
-import com.freded.task.client.dto.TaskFileQueryDTO;
-import com.freded.task.client.dto.TaskSortAndPaginationDTO;
 import com.freded.task.server.controller.TaskService;
 import com.freded.task.server.controller.UserService;
 import jakarta.inject.Inject;
@@ -22,9 +21,9 @@ public class TaskImpl implements Task {
      * {@inheritDoc}
      */
     @Override
-    public TaskDTO get(final String taskId, final TaskFileQueryDTO taskParams) {
+    public TaskDTO get(final String taskId) {
         String currentUser = userService.getUsername();
-        return taskService.get(taskId, currentUser, taskParams);
+        return taskService.get(taskId, currentUser);
     }
 
 
@@ -41,7 +40,7 @@ public class TaskImpl implements Task {
      * {@inheritDoc}
      */
     @Override
-    public List<TaskDTO> getAll(final TaskSortAndPaginationDTO qParams) {
+    public List<TaskDTO> getAll(final TaskPaginationAndSortingDTO qParams) {
         String currentUser = userService.getUsername();
         return taskService.getAll(qParams, currentUser);
     }

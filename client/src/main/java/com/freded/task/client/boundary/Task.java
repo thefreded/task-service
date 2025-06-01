@@ -1,8 +1,7 @@
 package com.freded.task.client.boundary;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.task.client.dto.TaskFileQueryDTO;
-import com.freded.task.client.dto.TaskSortAndPaginationDTO;
+import com.freded.dtos.TaskPaginationAndSortingDTO;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -31,11 +30,12 @@ public interface Task {
     /**
      * Retrieves all task created by the logged-in user.
      *
-     * @param qParams the {@link TaskSortAndPaginationDTO} object of pagination and sorting parameters.
+     * @param taskPaginationAndSortingDTO the {@link TaskPaginationAndSortingDTO} object of pagination and sorting
+     *                                    parameters.
      * @return a list of {@link TaskDTO}.
      */
     @GET
-    public List<TaskDTO> getAll(@BeanParam final TaskSortAndPaginationDTO qParams);
+    public List<TaskDTO> getAll(@BeanParam final TaskPaginationAndSortingDTO taskPaginationAndSortingDTO);
 
     /**
      * Retrieves a given task with the taskId provided.
@@ -45,7 +45,7 @@ public interface Task {
      */
     @GET
     @Path("{taskId}")
-    public TaskDTO get(@PathParam("taskId") final String taskId, @BeanParam final TaskFileQueryDTO taskParams);
+    public TaskDTO get(@PathParam("taskId") final String taskId);
 
 
     /**

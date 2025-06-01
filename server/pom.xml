@@ -21,10 +21,5 @@
             <artifactId>task-client</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.freded</groupId>
-            <artifactId>file-client</artifactId>
-            <version>${file-client.version}</version>
-        </dependency>
     </dependencies>
 </project>

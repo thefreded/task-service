@@ -1,8 +1,7 @@
 package com.freded.task.client;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.task.client.dto.TaskFileQueryDTO;
-import com.freded.task.client.dto.TaskSortAndPaginationDTO;
+import com.freded.dtos.TaskPaginationAndSortingDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -10,8 +9,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import java.util.List;
 
 /**
- * Provides a simplified interface for task management by delegating
- * to the underlying REST client implementation.
+ * Provides a simplified interface for task management by delegating to the underlying REST client implementation.
  */
 @ApplicationScoped
 public class TaskClient {
@@ -23,11 +21,11 @@ public class TaskClient {
     /**
      * Retrieves all tasks with optional sorting and pagination.
      *
-     * @param qParams sorting and pagination parameters
+     * @param taskPaginationAndSortingDTO sorting and pagination parameters
      * @return list of tasks as DTOs
      */
-    public List<TaskDTO> getAll(final TaskSortAndPaginationDTO qParams) {
-        return taskRestClient.getAll(qParams);
+    public List<TaskDTO> getAll(final TaskPaginationAndSortingDTO taskPaginationAndSortingDTO) {
+        return taskRestClient.getAll(taskPaginationAndSortingDTO);
     }
 
     /**
@@ -41,20 +39,15 @@ public class TaskClient {
     }
 
     /**
-     * Retrieves a specific task by ID with query parameters.
+     * Retrieves a specific task by ID.
      *
-     * @param taskId     the unique identifier of the task
-     * @param taskParams query parameters including file loading preferences
+     * @param taskId the unique identifier of the task
      * @return the task as DTO, or null if not found
      */
-    public TaskDTO get(final String taskId, final TaskFileQueryDTO taskParams) {
-        return taskRestClient.get(taskId, taskParams);
+    public TaskDTO get(final String taskId) {
+        return taskRestClient.get(taskId);
     }
 
-    public TaskDTO get(final String taskId) {
-        TaskFileQueryDTO taskFileQueryDTO = new TaskFileQueryDTO();
-        return get(taskId, taskFileQueryDTO);
-    }
 
     /**
      * Deletes a task by ID.

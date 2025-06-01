@@ -1,6 +1,6 @@
 package com.freded.task.server.controller;
 
-import com.freded.task.client.dto.TaskSortAndPaginationDTO;
+import com.freded.dtos.TaskPaginationAndSortingDTO;
 import com.freded.task.server.entity.TaskEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -43,12 +43,14 @@ public class TaskRepository {
      * Gets all tasks created by the currently authenticated user. Can also be sorted and paginated based on the
      * provided parameters.
      *
-     * @param createdBy who created the task. Ideally the loggedIn user.
-     * @param qParams   the {@link TaskSortAndPaginationDTO} containing pagination and sorting options.
+     * @param createdBy                   who created the task. Ideally the loggedIn user.
+     * @param taskPaginationAndSortingDTO the {@link TaskPaginationAndSortingDTO } containing pagination and sorting
+     *                                    options.
      * @return a list of {@link TaskEntity} objects representing the tasks created by the user in regard to the options
-     * provided in {@code qParams}.
+     * provided in {@code taskPaginationAndSortingDTO}.
      */
-    public List<TaskEntity> readAll(final String createdBy, final TaskSortAndPaginationDTO qParams) {
+    public List<TaskEntity> readAll(final String createdBy,
+            final TaskPaginationAndSortingDTO taskPaginationAndSortingDTO) {
         // 1. Get the CriteriaBuilder.
         CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -65,8 +67,8 @@ public class TaskRepository {
         // authenticated user.
         cbQuery.select(root).where(cb.equal(root.get(CREATEDBY), createdByParam));
 
-        // Apply sorting based on the parameters provided in qParams.
-        paginationAndSortingService.sort(cb, cbQuery, root, qParams);
+        // Apply sorting based on the parameters provided in taskPaginationAndSortingDTO.
+        paginationAndSortingService.sort(cb, cbQuery, root, taskPaginationAndSortingDTO);
 
         // Create a TypedQuery to execute the CriteriaQuery and get the result as TaskEntity objects.
         TypedQuery<TaskEntity> typedQuery = em.createQuery(cbQuery);
@@ -74,8 +76,8 @@ public class TaskRepository {
         // Set the parameter for the createdBy field to the username of the currently authenticated user.
         typedQuery.setParameter(CREATEDBY, createdBy);
 
-        // Apply pagination settings to the query based on the provided qParams.
-        paginationAndSortingService.paginate(typedQuery, qParams);
+        // Apply pagination settings to the query based on the provided taskPaginationAndSortingDTO.
+        paginationAndSortingService.paginate(typedQuery, taskPaginationAndSortingDTO);
 
         return typedQuery.getResultList();
     }

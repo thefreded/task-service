@@ -1,17 +1,12 @@
 package com.freded.task.server.controller;
 
 import com.freded.dtos.TaskDTO;
-import com.freded.dtos.TaskFileDTO;
-import com.freded.dtos.TaskFileSortAndPaginationDTO;
-import com.freded.file.client.TaskFileClient;
-import com.freded.task.client.dto.TaskFileQueryDTO;
-import com.freded.task.client.dto.TaskSortAndPaginationDTO;
+import com.freded.dtos.TaskPaginationAndSortingDTO;
 import com.freded.task.server.entity.TaskEntity;
 import com.freded.task.server.exception.ResourceNotFoundException;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.jboss.logging.Logger;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,20 +17,14 @@ import java.util.Objects;
  */
 @RequestScoped
 public class TaskService {
-    private static final Logger LOG = Logger.getLogger(TaskService.class);
+
     @Inject
     TaskRepository taskRepository;
 
     @Inject
     TaskMapper taskMapper;
 
-    @Inject
-    TaskFileClient taskFileClient;
-
-    @Inject
-    TaskFilePaginationAndSortingMapper taskFilePaginationAndSortingMapper;
-
-
+    
     /**
      * Creates a new task for the specified user.
      *
@@ -54,44 +43,27 @@ public class TaskService {
     /**
      * Retrieves all tasks for the current user with sorting and pagination.
      *
-     * @param qParams     sorting and pagination parameters
-     * @param currentUser the username of the user requesting tasks
+     * @param taskPaginationAndSortingDTO sorting and pagination parameters
+     * @param currentUser                 the username of the user requesting tasks
      * @return list of tasks as DTOs
      */
-    public List<TaskDTO> getAll(final TaskSortAndPaginationDTO qParams, final String currentUser) {
-        List<TaskEntity> taskEntities = taskRepository.readAll(currentUser, qParams);
+    public List<TaskDTO> getAll(final TaskPaginationAndSortingDTO taskPaginationAndSortingDTO,
+            final String currentUser) {
+        List<TaskEntity> taskEntities = taskRepository.readAll(currentUser, taskPaginationAndSortingDTO);
 
         return taskMapper.toDTOList(taskEntities);
     }
 
+
     /**
-     * Retrieves a specific task entity by ID for the current user.
+     * Retrieves a specific task by ID
      *
      * @param taskId      the unique identifier of the task
      * @param currentUser the username of the user requesting the task
-     * @return the task entity
-     * @throws ResourceNotFoundException if task is not found
-     */
-    public TaskEntity get(final String taskId, final String currentUser) {
-        TaskEntity taskEntity = taskRepository.read(currentUser, taskId);
-
-        if (taskEntity == null) {
-            throw new ResourceNotFoundException("Not found task with ID " + taskId);
-        }
-
-        return taskEntity;
-    }
-
-    /**
-     * Retrieves a specific task by ID with optional file loading.
-     *
-     * @param taskId      the unique identifier of the task
-     * @param currentUser the username of the user requesting the task
-     * @param taskParams  query parameters including file loading preference
      * @return the task as DTO with or without files
      * @throws ResourceNotFoundException if task is not found
      */
-    public TaskDTO get(final String taskId, final String currentUser, final TaskFileQueryDTO taskParams) {
+    public TaskDTO get(final String taskId, final String currentUser) {
 
         TaskEntity taskEntity = taskRepository.read(currentUser, taskId);
 
@@ -99,26 +71,10 @@ public class TaskService {
             throw new ResourceNotFoundException("Not found task with ID " + taskId);
         }
 
-        TaskDTO taskDTO = taskMapper.toDTO(taskEntity);
+        return taskMapper.toDTO(taskEntity);
 
-        if (taskParams.isLoadFiles()) {
-            return this.loadTaskWithFiles(taskDTO, taskParams);
-        } else {
-            return taskDTO;
-        }
     }
 
-    private TaskDTO loadTaskWithFiles(final TaskDTO taskDTO, final TaskFileQueryDTO taskFileQueryDTO) {
-
-        TaskFileSortAndPaginationDTO taskFileSortAndPaginationDTO =
-                taskFilePaginationAndSortingMapper.toTaskFilePaginationDTO(taskFileQueryDTO);
-        List<TaskFileDTO> taskFiles = taskFileClient.getFilesForTask(taskDTO.getId(), taskFileSortAndPaginationDTO);
-
-
-        taskDTO.setTaskFiles(taskFiles);
-
-        return taskDTO;
-    }
 
     /**
      * Deletes a task by ID for the current user.
