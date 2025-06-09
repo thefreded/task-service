@@ -6,7 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 /**
@@ -23,7 +24,8 @@ public class TaskEntity {
      * Unique identifier for the task, generated randomly.
      */
     @Id
-    private String id = UUID.randomUUID().toString();
+    @GeneratedValue
+    private UUID id;
 
     /**
      * The name of the task. The field must be unique and not be null.
@@ -41,12 +43,12 @@ public class TaskEntity {
      * The local date time that the task was created. It's set automatically by default with the current date and time
      * the task was created.
      */
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     /**
      * The local date time when the task was updated (or last updated).
      */
-    private LocalDateTime updatedAt;
+    private ZonedDateTime updatedAt;
 
     /**
      * The username of the logged-in user who created the task.
@@ -55,13 +57,13 @@ public class TaskEntity {
 
     @PrePersist
     protected void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
         createdAt = now;
         updatedAt = now;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = ZonedDateTime.now(ZoneOffset.UTC);
     }
 }

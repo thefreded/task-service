@@ -11,12 +11,14 @@ import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository class for managing task data persistence operations. Provides CRUD operations for TaskEntity with
  * user-specific access control using JPA Criteria API for dynamic query building.
  */
 @ApplicationScoped
+@Transactional
 public class TaskRepository {
 
     private static final String CREATEDBY = "createdBy";
@@ -33,7 +35,6 @@ public class TaskRepository {
      * @param task the {@link TaskEntity} object containing task details to be added.
      * @return the created {@link TaskEntity} .
      */
-    @Transactional
     public TaskEntity create(final TaskEntity task) {
         entityManager.persist(task);
         return task;
@@ -125,8 +126,7 @@ public class TaskRepository {
      * @param task task to be deleted {@link TaskEntity}
      * @return the id of the deleted task or {@code null} if no task is found with the id.
      */
-    @Transactional
-    public String delete(final TaskEntity task) {
+    public UUID delete(final TaskEntity task) {
         entityManager.remove(task);
         return task.getId();
     }

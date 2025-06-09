@@ -17,9 +17,9 @@ import static org.hamcrest.Matchers.is;
 @Disabled
 @QuarkusTest
 @TestSecurity(user = "testUser", roles = {"user"})
-public class TaskTest {
+public class TaskResourceTest {
 
-     String persistedTaskId;
+    String persistedTaskId;
 
     @BeforeEach
     void setup() {
@@ -31,7 +31,8 @@ public class TaskTest {
             newTask.setName(taskName);
             newTask.setDescription(taskDescription);
 
-            persistedTaskId = given().contentType(MediaType.APPLICATION_JSON).body(newTask).when().post("/api/tasks").then().statusCode(200).body("name", is(taskName), "description", is(taskDescription)).extract().path("id");
+            persistedTaskId =
+                    given().contentType(MediaType.APPLICATION_JSON).body(newTask).when().post("/api/tasks").then().statusCode(200).body("name", is(taskName), "description", is(taskDescription)).extract().path("id");
         }
     }
 
@@ -58,16 +59,7 @@ public class TaskTest {
     public void testGetAllTask() {
 
 
-        given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .get("/api/tasks?limit=100")
-                .then()
-                .statusCode(200)
-                .body("size()", is(2))
-                .body("[1].id", is(persistedTaskId))
-                .body("[1].name", is("Updated Task"))
-                .body("[1].description", is("Updated This is a test task"));
+        given().contentType(MediaType.APPLICATION_JSON).when().get("/api/tasks?limit=100").then().statusCode(200).body("size()", is(2)).body("[1].id", is(persistedTaskId)).body("[1].name", is("Updated Task")).body("[1].description", is("Updated This is a test task"));
 
 
     }

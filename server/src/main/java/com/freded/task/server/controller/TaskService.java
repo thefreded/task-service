@@ -2,9 +2,11 @@ package com.freded.task.server.controller;
 
 import com.freded.dtos.TaskDTO;
 import com.freded.dtos.TaskPaginationAndSortingDTO;
+import com.freded.task.server.common.LoggedInUserInfo;
+import com.freded.task.server.common.annotation.LoggedInUser;
 import com.freded.task.server.entity.TaskEntity;
 import com.freded.task.server.exception.ResourceNotFoundException;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
@@ -15,7 +17,8 @@ import java.util.Objects;
  * Service class for managing task operations. Provides business logic for CRUD operations on tasks with user-specific
  * access control.
  */
-@RequestScoped
+@Transactional
+@ApplicationScoped
 public class TaskService {
 
     @Inject
@@ -24,19 +27,23 @@ public class TaskService {
     @Inject
     TaskMapper taskMapper;
 
-    
+
+    @Inject
+    @LoggedInUser
+    LoggedInUserInfo loggedInUserInfo;
+
+
     /**
      * Creates a new task for the specified user.
      *
-     * @param task        the task data to create
-     * @param currentUser the username of the user creating the task
+     * @param task the task data to create
      * @return the created task as DTO without file associations
      */
-    @Transactional
-    public TaskDTO create(final TaskDTO task, final String currentUser) {
+
+    public TaskDTO create(final TaskDTO task) {
         TaskEntity newTask = taskMapper.toEntity(task);
 
-        newTask.setCreatedBy(currentUser);
+        newTask.setCreatedBy(loggedInUserInfo.getUsername());
         return taskMapper.toDTO(taskRepository.create(newTask));
     }
 
@@ -44,12 +51,11 @@ public class TaskService {
      * Retrieves all tasks for the current user with sorting and pagination.
      *
      * @param taskPaginationAndSortingDTO sorting and pagination parameters
-     * @param currentUser                 the username of the user requesting tasks
      * @return list of tasks as DTOs
      */
-    public List<TaskDTO> getAll(final TaskPaginationAndSortingDTO taskPaginationAndSortingDTO,
-            final String currentUser) {
-        List<TaskEntity> taskEntities = taskRepository.readAll(currentUser, taskPaginationAndSortingDTO);
+    public List<TaskDTO> getAll(final TaskPaginationAndSortingDTO taskPaginationAndSortingDTO) {
+        List<TaskEntity> taskEntities = taskRepository.readAll(loggedInUserInfo.getUsername(),
+                taskPaginationAndSortingDTO);
 
         return taskMapper.toDTOList(taskEntities);
     }
@@ -58,14 +64,12 @@ public class TaskService {
     /**
      * Retrieves a specific task by ID
      *
-     * @param taskId      the unique identifier of the task
-     * @param currentUser the username of the user requesting the task
+     * @param taskId the unique identifier of the task
      * @return the task as DTO with or without files
      * @throws ResourceNotFoundException if task is not found
      */
-    public TaskDTO get(final String taskId, final String currentUser) {
-
-        TaskEntity taskEntity = taskRepository.read(currentUser, taskId);
+    public TaskDTO get(final String taskId) {
+        TaskEntity taskEntity = taskRepository.read(loggedInUserInfo.getUsername(), taskId);
 
         if (taskEntity == null) {
             throw new ResourceNotFoundException("Not found task with ID " + taskId);
@@ -79,36 +83,32 @@ public class TaskService {
     /**
      * Deletes a task by ID for the current user.
      *
-     * @param taskId      the unique identifier of the task to delete
-     * @param currentUser the username of the user deleting the task
+     * @param taskId the unique identifier of the task to delete
      * @return confirmation message or identifier of the deleted task
      */
-    @Transactional
-    public String delete(final String taskId, final String currentUser) {
+    public String delete(final String taskId) {
+        TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), taskId);
 
-        TaskEntity task = taskRepository.read(currentUser, taskId);
-        String deletedTaskId = taskRepository.delete(task);
 
-        if (!Objects.equals(taskId, deletedTaskId)) {
+        if (!Objects.equals(taskId, task.getId().toString())) {
             throw new ResourceNotFoundException("Not found task with ID " + taskId);
         }
 
-        return deletedTaskId;
+        return taskRepository.delete(task).toString();
+
     }
 
     /**
      * Updates an existing task with new data.
      *
-     * @param taskId      the unique identifier of the task to update
-     * @param newTask     the new task data
-     * @param currentUser the username of the user updating the task
+     * @param taskId  the unique identifier of the task to update
+     * @param newTask the new task data
      * @return the updated task as DTO without file associations
      * @throws ResourceNotFoundException if task is not found
      */
-    @Transactional
-    public TaskDTO update(final String taskId, final TaskDTO newTask, final String currentUser) {
+    public TaskDTO update(final String taskId, final TaskDTO newTask) {
 
-        TaskEntity task = taskRepository.read(currentUser, taskId);
+        TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), taskId);
 
         if (task == null) {
             throw new ResourceNotFoundException("Not found task with ID " + taskId);

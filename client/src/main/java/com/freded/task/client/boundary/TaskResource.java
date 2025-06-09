@@ -13,7 +13,7 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @RolesAllowed({"user"})
 @Path("tasks")
-public interface Task {
+public interface TaskResource {
 
 
     /**
