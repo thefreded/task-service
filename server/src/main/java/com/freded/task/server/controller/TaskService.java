@@ -1,9 +1,9 @@
 package com.freded.task.server.controller;
 
+import com.freded.common.LoggedInUserInfo;
+import com.freded.common.annotation.LoggedInUser;
 import com.freded.dtos.TaskDTO;
 import com.freded.dtos.TaskPaginationAndSortingDTO;
-import com.freded.task.server.common.LoggedInUserInfo;
-import com.freded.task.server.common.annotation.LoggedInUser;
 import com.freded.task.server.entity.TaskEntity;
 import com.freded.task.server.exception.ResourceNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
