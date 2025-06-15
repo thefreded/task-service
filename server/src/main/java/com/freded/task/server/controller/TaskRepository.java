@@ -92,7 +92,7 @@ public class TaskRepository {
      * @param taskId    unique identifier of the task.
      * @return the found task {@link TaskEntity}, or {@code null} if no task is found.
      */
-    public TaskEntity read(final String createdBy, final String taskId) {
+    public TaskEntity read(final String createdBy, final UUID taskId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TaskEntity> cq = cb.createQuery(TaskEntity.class);
         Root<TaskEntity> task = cq.from(TaskEntity.class);

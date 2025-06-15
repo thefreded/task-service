@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Service class for managing task operations. Provides business logic for CRUD operations on tasks with user-specific
@@ -69,7 +70,8 @@ public class TaskService {
      * @throws ResourceNotFoundException if task is not found
      */
     public TaskDTO get(final String taskId) {
-        TaskEntity taskEntity = taskRepository.read(loggedInUserInfo.getUsername(), taskId);
+
+        TaskEntity taskEntity = taskRepository.read(loggedInUserInfo.getUsername(), UUID.fromString(taskId));
 
         if (taskEntity == null) {
             throw new ResourceNotFoundException("Not found task with ID " + taskId);
@@ -87,7 +89,7 @@ public class TaskService {
      * @return confirmation message or identifier of the deleted task
      */
     public String delete(final String taskId) {
-        TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), taskId);
+        TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), this.stringToUuid(taskId));
 
 
         if (!Objects.equals(taskId, task.getId().toString())) {
@@ -108,10 +110,10 @@ public class TaskService {
      */
     public TaskDTO update(final String taskId, final TaskDTO newTask) {
 
-        TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), taskId);
+        TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), this.stringToUuid(taskId));
 
         if (task == null) {
-            throw new ResourceNotFoundException("Not found task with ID " + taskId);
+            throw new ResourceNotFoundException("Not found task with ID " + this.stringToUuid((taskId)));
         }
 
         // update task with new task inputs
@@ -121,4 +123,18 @@ public class TaskService {
         // TODO: downside is I need to flush and refresh to get the latest DB Value. Discuss later.
         return taskMapper.toDTO(taskRepository.update(task));
     }
+
+    private UUID stringToUuid(String taskId) {
+        if (taskId == null || taskId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Task ID cannot be null or empty");
+        }
+
+        try {
+            return UUID.fromString(taskId.trim());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid UUID format: " + taskId, e);
+        }
+    }
+
+
 }
