@@ -1,12 +1,5 @@
 package com.freded.task.server.exception;
 
-import jakarta.annotation.Priority;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.ext.ExceptionMapper;
-import jakarta.ws.rs.ext.Provider;
-import org.jboss.logging.Logger;
-
 /*
 @Provider
 public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
@@ -25,7 +18,8 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
 
 
 
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResponse).type(MediaType.APPLICATION_JSON).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).dto(errorResponse).type(MediaType
+        .APPLICATION_JSON).build();
     }
 }
 

@@ -1,8 +1,9 @@
 package com.freded.task.server.boundary;
 
-import com.freded.dtos.TaskDTO;
-import com.freded.dtos.TaskPaginationAndSortingDTO;
+
 import com.freded.task.client.boundary.TaskResource;
+import com.freded.task.client.dto.TaskDTO;
+import com.freded.task.client.dto.TaskPaginationAndSortingDTO;
 import com.freded.task.server.controller.TaskService;
 import jakarta.inject.Inject;
 

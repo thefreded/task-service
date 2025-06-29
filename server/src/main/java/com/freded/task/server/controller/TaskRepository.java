@@ -1,6 +1,6 @@
 package com.freded.task.server.controller;
 
-import com.freded.dtos.TaskPaginationAndSortingDTO;
+import com.freded.task.client.dto.TaskPaginationAndSortingDTO;
 import com.freded.task.server.entity.TaskEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -30,7 +30,7 @@ public class TaskRepository {
     PaginationAndSortingService paginationAndSortingService;
 
     /**
-     * Adds a new task to the entity manager/database.
+     * Adds a new task to the dto manager/database.
      *
      * @param task the {@link TaskEntity} object containing task details to be added.
      * @return the created {@link TaskEntity} .
@@ -64,7 +64,7 @@ public class TaskRepository {
         // Create a ParameterExpression for the parameter
         ParameterExpression<String> createdByParam = cb.parameter(String.class, CREATEDBY);
 
-        // Select the root entity (TaskEntity) and apply the filter condition to ensure the task is created by the
+        // Select the root dto (TaskEntity) and apply the filter condition to ensure the task is created by the
         // authenticated user.
         cbQuery.select(root).where(cb.equal(root.get(CREATEDBY), createdByParam));
 

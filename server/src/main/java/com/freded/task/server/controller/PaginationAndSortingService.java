@@ -1,7 +1,7 @@
 package com.freded.task.server.controller;
 
-import com.freded.dtos.PaginationAndSortingDTO;
-import com.freded.dtos.TaskPaginationAndSortingDTO;
+import com.freded.common.dto.PaginationAndSortingDTO;
+import com.freded.task.client.dto.TaskPaginationAndSortingDTO;
 import com.freded.task.server.entity.TaskEntity;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.TypedQuery;
@@ -19,7 +19,7 @@ public class PaginationAndSortingService {
      *
      * @param cb                          The CriteriaBuilder for constructing sort expressions
      * @param cbQuery                     The CriteriaQuery to apply sorting to
-     * @param root                        The root entity being queried
+     * @param root                        The root dto being queried
      * @param taskPaginationAndSortingDTO Sorting parameters containing sortBy field and sortOrder direction
      */
     public void sort(final CriteriaBuilder cb, final CriteriaQuery<TaskEntity> cbQuery, final Root<TaskEntity> root,
@@ -34,12 +34,12 @@ public class PaginationAndSortingService {
     }
 
     /**
-     * Using Generics here just for practise. Paginate the entity based on the provided {@link PaginationAndSortingDTO}
+     * Using Generics here just for practise. Paginate the dto based on the provided {@link PaginationAndSortingDTO}
      * parameters.
      *
      * @param typedQuery the {@link TypedQuery} to apply pagination to.
      * @param qParams    the {@link PaginationAndSortingDTO} containing pagination options.
-     * @param <T>        The type of the entity being queried, which will be sorted.
+     * @param <T>        The type of the dto being queried, which will be sorted.
      * @param <Q>        The type of the pagination parameters object, which must extend
      *                   {@link PaginationAndSortingDTO}.
      */

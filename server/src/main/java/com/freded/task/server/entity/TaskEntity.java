@@ -11,8 +11,8 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 /**
- * Represents a Task in the entity manager. It includes fields for task identification, name, description, creation
- * date, last updated date, and the user who created the task.
+ * Represents a Task in the dto manager. It includes fields for task identification, name, description, creation date,
+ * last updated date, and the user who created the task.
  */
 @Entity
 @Data

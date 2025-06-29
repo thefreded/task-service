@@ -1,7 +1,8 @@
 package com.freded.task.client.boundary;
 
-import com.freded.dtos.TaskDTO;
-import com.freded.dtos.TaskPaginationAndSortingDTO;
+
+import com.freded.task.client.dto.TaskDTO;
+import com.freded.task.client.dto.TaskPaginationAndSortingDTO;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

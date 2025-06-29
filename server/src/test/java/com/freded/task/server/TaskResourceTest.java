@@ -1,7 +1,7 @@
 package com.freded.task.server;
 
 
-import com.freded.dtos.TaskDTO;
+import com.freded.task.client.dto.TaskDTO;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
