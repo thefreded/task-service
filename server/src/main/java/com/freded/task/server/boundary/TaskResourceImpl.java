@@ -5,11 +5,13 @@ import com.freded.task.client.boundary.TaskResource;
 import com.freded.task.client.dto.TaskDTO;
 import com.freded.task.client.dto.TaskPaginationAndSortingDTO;
 import com.freded.task.server.controller.TaskService;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
 import java.util.List;
 
 
+@RequestScoped
 public class TaskResourceImpl implements TaskResource {
 
     @Inject

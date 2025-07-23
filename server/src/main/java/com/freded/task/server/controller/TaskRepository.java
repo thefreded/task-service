@@ -1,5 +1,6 @@
 package com.freded.task.server.controller;
 
+import com.freded.common.util.PaginationAndSortingService;
 import com.freded.task.client.dto.TaskPaginationAndSortingDTO;
 import com.freded.task.server.entity.TaskEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -26,8 +27,6 @@ public class TaskRepository {
     @Inject
     EntityManager entityManager;
 
-    @Inject
-    PaginationAndSortingService paginationAndSortingService;
 
     /**
      * Adds a new task to the dto manager/database.
@@ -69,7 +68,7 @@ public class TaskRepository {
         cbQuery.select(root).where(cb.equal(root.get(CREATEDBY), createdByParam));
 
         // Apply sorting based on the parameters provided in taskPaginationAndSortingDTO.
-        paginationAndSortingService.sort(cb, cbQuery, root, taskPaginationAndSortingDTO);
+        PaginationAndSortingService.sort(cb, cbQuery, root, taskPaginationAndSortingDTO);
 
         // Create a TypedQuery to execute the CriteriaQuery and get the result as TaskEntity objects.
         TypedQuery<TaskEntity> typedQuery = entityManager.createQuery(cbQuery);
@@ -78,7 +77,7 @@ public class TaskRepository {
         typedQuery.setParameter(CREATEDBY, createdBy);
 
         // Apply pagination settings to the query based on the provided taskPaginationAndSortingDTO.
-        paginationAndSortingService.paginate(typedQuery, taskPaginationAndSortingDTO);
+        PaginationAndSortingService.paginate(typedQuery, taskPaginationAndSortingDTO);
 
         return typedQuery.getResultList();
     }
@@ -115,7 +114,6 @@ public class TaskRepository {
      * @param newTask newly updated task {@link TaskEntity}.
      * @return newly updated task {@link TaskEntity} or {@code null} if no task is found.
      */
-    @Transactional
     public TaskEntity update(final TaskEntity newTask) {
         return entityManager.merge(newTask);
     }
