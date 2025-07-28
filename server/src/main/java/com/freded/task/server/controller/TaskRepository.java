@@ -52,16 +52,16 @@ public class TaskRepository {
     public List<TaskEntity> readAll(final String createdBy,
             final TaskPaginationAndSortingDTO taskPaginationAndSortingDTO) {
         // 1. Get the CriteriaBuilder.
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         // Create the CriteriaQuery object for Task (more like blueprint)
-        CriteriaQuery<TaskEntity> cbQuery = cb.createQuery(TaskEntity.class);
+        final CriteriaQuery<TaskEntity> cbQuery = cb.createQuery(TaskEntity.class);
 
         //Define the FROM clause (Task table. Where the query should start from)
-        Root<TaskEntity> root = cbQuery.from(TaskEntity.class);
+        final Root<TaskEntity> root = cbQuery.from(TaskEntity.class);
 
         // Create a ParameterExpression for the parameter
-        ParameterExpression<String> createdByParam = cb.parameter(String.class, CREATEDBY);
+        final ParameterExpression<String> createdByParam = cb.parameter(String.class, CREATEDBY);
 
         // Select the root dto (TaskEntity) and apply the filter condition to ensure the task is created by the
         // authenticated user.
@@ -71,7 +71,7 @@ public class TaskRepository {
         PaginationAndSortingService.sort(cb, cbQuery, root, taskPaginationAndSortingDTO);
 
         // Create a TypedQuery to execute the CriteriaQuery and get the result as TaskEntity objects.
-        TypedQuery<TaskEntity> typedQuery = entityManager.createQuery(cbQuery);
+        final TypedQuery<TaskEntity> typedQuery = entityManager.createQuery(cbQuery);
 
         // Set the parameter for the createdBy field to the username of the currently authenticated user.
         typedQuery.setParameter(CREATEDBY, createdBy);
@@ -92,13 +92,13 @@ public class TaskRepository {
      * @return the found task {@link TaskEntity}, or {@code null} if no task is found.
      */
     public TaskEntity read(final String createdBy, final UUID taskId) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<TaskEntity> cq = cb.createQuery(TaskEntity.class);
-        Root<TaskEntity> task = cq.from(TaskEntity.class);
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<TaskEntity> cq = cb.createQuery(TaskEntity.class);
+        final Root<TaskEntity> task = cq.from(TaskEntity.class);
 
         // Add conditions
-        Predicate idPredicate = cb.equal(task.get("id"), taskId);
-        Predicate createdByPredicate = cb.equal(task.get("createdBy"), createdBy);
+        final Predicate idPredicate = cb.equal(task.get("id"), taskId);
+        final Predicate createdByPredicate = cb.equal(task.get("createdBy"), createdBy);
         cq.where(cb.and(idPredicate, createdByPredicate));
 
         try {

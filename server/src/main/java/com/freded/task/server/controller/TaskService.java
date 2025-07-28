@@ -42,7 +42,7 @@ public class TaskService {
      */
 
     public TaskDTO create(final TaskDTO task) {
-        TaskEntity newTask = taskMapper.toEntity(task);
+        final TaskEntity newTask = taskMapper.toEntity(task);
 
         newTask.setCreatedBy(loggedInUserInfo.getUsername());
         return taskMapper.toDTO(taskRepository.create(newTask));
@@ -55,7 +55,7 @@ public class TaskService {
      * @return list of tasks as DTOs
      */
     public List<TaskDTO> getAll(final TaskPaginationAndSortingDTO taskPaginationAndSortingDTO) {
-        List<TaskEntity> taskEntities = taskRepository.readAll(loggedInUserInfo.getUsername(),
+        final List<TaskEntity> taskEntities = taskRepository.readAll(loggedInUserInfo.getUsername(),
                 taskPaginationAndSortingDTO);
 
         return taskMapper.toDTOList(taskEntities);
@@ -71,7 +71,7 @@ public class TaskService {
      */
     public TaskDTO get(final String taskId) {
 
-        TaskEntity taskEntity = taskRepository.read(loggedInUserInfo.getUsername(), UUID.fromString(taskId));
+        final TaskEntity taskEntity = taskRepository.read(loggedInUserInfo.getUsername(), UUID.fromString(taskId));
 
         if (taskEntity == null) {
             throw new ResourceNotFoundException("Not found task with ID " + taskId);
@@ -89,7 +89,7 @@ public class TaskService {
      * @return confirmation message or identifier of the deleted task
      */
     public String delete(final String taskId) {
-        TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), this.stringToUuid(taskId));
+        final TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), this.stringToUuid(taskId));
 
 
         if (!Objects.equals(taskId, task.getId().toString())) {
@@ -110,7 +110,7 @@ public class TaskService {
      */
     public TaskDTO update(final String taskId, final TaskDTO newTask) {
 
-        TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), this.stringToUuid(taskId));
+        final TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), this.stringToUuid(taskId));
 
         if (task == null) {
             throw new ResourceNotFoundException("Not found task with ID " + this.stringToUuid((taskId)));
