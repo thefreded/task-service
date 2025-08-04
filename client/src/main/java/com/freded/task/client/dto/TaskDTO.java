@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 /**
  * DTO for task
@@ -19,7 +20,7 @@ public class TaskDTO {
     /**
      * Unique identifier for the task.
      */
-    private String id;
+    private UUID id;
 
     /**
      * The name of the task.
