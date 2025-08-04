@@ -9,6 +9,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @RequestScoped
@@ -22,7 +23,7 @@ public class TaskResourceImpl implements TaskResource {
      * {@inheritDoc}
      */
     @Override
-    public TaskDTO get(final String taskId) {
+    public TaskDTO get(final UUID taskId) {
         return taskService.get(taskId);
     }
 
@@ -47,7 +48,7 @@ public class TaskResourceImpl implements TaskResource {
      * {@inheritDoc}
      */
     @Override
-    public String delete(final String taskId) {
+    public UUID delete(final UUID taskId) {
         return taskService.delete(taskId);
     }
 
@@ -55,7 +56,7 @@ public class TaskResourceImpl implements TaskResource {
      * {@inheritDoc}
      */
     @Override
-    public TaskDTO update(final String taskId, final TaskDTO task) {
+    public TaskDTO update(final UUID taskId, final TaskDTO task) {
         return taskService.update(taskId, task);
     }
 }

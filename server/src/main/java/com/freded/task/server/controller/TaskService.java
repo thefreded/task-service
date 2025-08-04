@@ -9,9 +9,9 @@ import com.freded.task.server.exception.ResourceNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -69,9 +69,9 @@ public class TaskService {
      * @return the task as DTO with or without files
      * @throws ResourceNotFoundException if task is not found
      */
-    public TaskDTO get(final String taskId) {
+    public TaskDTO get(final UUID taskId) {
 
-        final TaskEntity taskEntity = taskRepository.read(loggedInUserInfo.getUsername(), UUID.fromString(taskId));
+        final TaskEntity taskEntity = taskRepository.read(loggedInUserInfo.getUsername(), taskId);
 
         if (taskEntity == null) {
             throw new ResourceNotFoundException("Not found task with ID " + taskId);
@@ -88,15 +88,15 @@ public class TaskService {
      * @param taskId the unique identifier of the task to delete
      * @return confirmation message or identifier of the deleted task
      */
-    public String delete(final String taskId) {
-        final TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), this.stringToUuid(taskId));
+    public UUID delete(final UUID taskId) {
+        final TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), taskId);
 
 
-        if (!Objects.equals(taskId, task.getId().toString())) {
-            throw new ResourceNotFoundException("Not found task with ID " + taskId);
+        if (!taskId.equals(task.getId())) {
+            throw new NotFoundException("Not found task with ID " + taskId);
         }
 
-        return taskRepository.delete(task).toString();
+        return taskRepository.delete(task);
 
     }
 
@@ -108,12 +108,12 @@ public class TaskService {
      * @return the updated task as DTO without file associations
      * @throws ResourceNotFoundException if task is not found
      */
-    public TaskDTO update(final String taskId, final TaskDTO newTask) {
+    public TaskDTO update(final UUID taskId, final TaskDTO newTask) {
 
-        final TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), this.stringToUuid(taskId));
+        final TaskEntity task = taskRepository.read(loggedInUserInfo.getUsername(), taskId);
 
         if (task == null) {
-            throw new ResourceNotFoundException("Not found task with ID " + this.stringToUuid((taskId)));
+            throw new ResourceNotFoundException("Not found task with ID " + taskId);
         }
 
         // update task with new task inputs
@@ -122,18 +122,6 @@ public class TaskService {
 
         // TODO: downside is I need to flush and refresh to get the latest DB Value. Discuss later.
         return taskMapper.toDTO(taskRepository.update(task));
-    }
-
-    private UUID stringToUuid(String taskId) {
-        if (taskId == null || taskId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Task ID cannot be null or empty");
-        }
-
-        try {
-            return UUID.fromString(taskId.trim());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid UUID format: " + taskId, e);
-        }
     }
 
 

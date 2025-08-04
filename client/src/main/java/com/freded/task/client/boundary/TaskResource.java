@@ -8,6 +8,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,7 +47,7 @@ public interface TaskResource {
      */
     @GET
     @Path("{taskId}")
-    public TaskDTO get(@PathParam("taskId") final String taskId);
+    public TaskDTO get(@PathParam("taskId") final UUID taskId);
 
 
     /**
@@ -57,7 +58,7 @@ public interface TaskResource {
      */
     @DELETE
     @Path("{taskId}")
-    public String delete(@PathParam("taskId") final String taskId);
+    public UUID delete(@PathParam("taskId") final UUID taskId);
 
     /**
      * Updates task that has the taskId provided with the task object provided.
@@ -68,5 +69,5 @@ public interface TaskResource {
      */
     @PUT
     @Path("{taskId}")
-    public TaskDTO update(@PathParam("taskId") final String taskId, final TaskDTO task);
+    public TaskDTO update(@PathParam("taskId") final UUID taskId, final TaskDTO task);
 }
